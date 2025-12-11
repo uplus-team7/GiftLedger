@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import springboot.giftledger.entity.Event;
 import springboot.giftledger.entity.GiftLog;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.EventType;
@@ -41,4 +43,8 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
             @Param("eventType") EventType eventType,
             @Param("actionType") ActionType actionType
     );
+    
+    
+    
+    GiftLog findFirstByEventOrderByGiftIdDesc(Event event);
 }
