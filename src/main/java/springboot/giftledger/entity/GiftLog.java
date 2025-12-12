@@ -1,7 +1,10 @@
 package springboot.giftledger.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.PayMethod;
 
@@ -18,8 +21,8 @@ public class GiftLog {
     private Long giftId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    @JoinColumn(name = "event_acquaintance_id", nullable = false)
+    private EventAcquaintance eventAcquaintance;
 
     @Column(nullable = false)
     private long amount;

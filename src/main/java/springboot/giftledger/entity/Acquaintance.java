@@ -1,7 +1,10 @@
 package springboot.giftledger.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import springboot.giftledger.enums.Relation;
 
 
