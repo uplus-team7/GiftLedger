@@ -940,19 +940,43 @@
             '<div class="error-message">이벤트 분포 데이터를 불러올 수 없습니다.</div>';
     }
 
-    // 3. 지인 분석 데이터 로드 (TODO)
+    // 3. 지인 분석 데이터 로드
     async function loadRelationData() {
-        displayDemoRelation();
+        const token = localStorage.getItem('accessToken');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/analysis/relation`, {
+                headers: {
+                    'X-AUTH-TOKEN': token
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch relation data');
+            }
+
+            const data = await response.json();
+
+            // TOP 5 지인 표시
+            displayTopRelations(data.topRelations);
+
+            // 지인별 회수율 표시
+            displayRelationRecovery(data.relationRecovery);
+
+        } catch (error) {
+            console.error('Error loading relation:', error);
+            displayRelationError();
+        }
     }
 
-    function displayDemoRelation() {
-        const topRelations = [
-            { name: '김철수', totalAmount: 500000, eventCount: 5, avgAmount: 100000 },
-            { name: '이영희', totalAmount: 400000, eventCount: 4, avgAmount: 100000 },
-            { name: '박민수', totalAmount: 350000, eventCount: 3, avgAmount: 116667 },
-            { name: '최지은', totalAmount: 300000, eventCount: 3, avgAmount: 100000 },
-            { name: '정대한', totalAmount: 250000, eventCount: 2, avgAmount: 125000 }
-        ];
+    // TOP 5 지인 표시
+    function displayTopRelations(topRelations) {
+        const container = document.getElementById('topRelations');
+
+        if (!topRelations || topRelations.length === 0) {
+            container.innerHTML = '<div class="no-data">지인 데이터가 없습니다.</div>';
+            return;
+        }
 
         let html = '';
         topRelations.forEach((rel, index) => {
@@ -966,29 +990,49 @@
                 </div>
             `;
         });
-        document.getElementById('topRelations').innerHTML = html;
+        container.innerHTML = html;
+    }
 
-        const recoveryData = [
-            { name: '김철수', give: 300000, take: 250000, rate: 83 },
-            { name: '이영희', give: 200000, take: 200000, rate: 100 },
-            { name: '박민수', give: 150000, take: 100000, rate: 67 },
-            { name: '최지은', give: 100000, take: 0, rate: 0 }
-        ];
+    // 지인별 회수율 표시
+    function displayRelationRecovery(relationRecovery) {
+        const container = document.getElementById('relationRecovery');
 
-        html = '';
-        recoveryData.forEach(rel => {
-            const badgeClass = rel.rate >= 80 ? 'badge-success' : rel.rate >= 50 ? 'badge-warning' : 'badge-danger';
+        if (!relationRecovery || relationRecovery.length === 0) {
+            container.innerHTML = '<div class="no-data">회수율 데이터가 없습니다.</div>';
+            return;
+        }
+
+        let html = '';
+        relationRecovery.forEach(rel => {
+            const badgeClass = rel.rate >= 80 ? 'badge-success' :
+                rel.rate >= 50 ? 'badge-warning' : 'badge-danger';
+
             html += `
                 <div class="list-item">
                     <div class="list-item-info">
-                        <div class="list-item-name">${rel.name} <span class="badge ${badgeClass}">${rel.rate}%</span></div>
-                        <div class="list-item-detail">준 금액: ${rel.give.toLocaleString()}원 / 받은 금액: ${rel.take.toLocaleString()}원</div>
+                        <div class="list-item-name">
+                            ${rel.name}
+                            <span class="badge ${badgeClass}">${rel.rate}%</span>
+                        </div>
+                        <div class="list-item-detail">
+                            준 금액: ${rel.give.toLocaleString()}원 /
+                            받은 금액: ${rel.take.toLocaleString()}원
+                        </div>
                     </div>
                 </div>
             `;
         });
-        document.getElementById('relationRecovery').innerHTML = html;
+        container.innerHTML = html;
     }
+
+    // 지인 분석 에러 표시
+    function displayRelationError() {
+        document.getElementById('topRelations').innerHTML =
+            '<div class="error-message">TOP 5 지인 데이터를 불러올 수 없습니다.</div>';
+        document.getElementById('relationRecovery').innerHTML =
+            '<div class="error-message">회수율 데이터를 불러올 수 없습니다.</div>';
+    }
+
 
     // 4. 회수율 데이터 로드 (TODO)
     async function loadRecoveryData() {

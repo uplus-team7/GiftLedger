@@ -34,11 +34,11 @@ public class RecentEventDto {
                 .actionType(giftLog.getActionType().name())
                 .payMethod(giftLog.getPayMethod().name())
                 .memo(giftLog.getMemo())
-                .acquaintanceName(giftLog.getEvent().getAcquaintance().getName())
-                .eventType(giftLog.getEvent().getEventType().name())
-                .eventName(giftLog.getEvent().getEventName())
-                .eventDate(giftLog.getEvent().getEventDate().format(formatter))
-                .location(giftLog.getEvent().getLocation())
+                .acquaintanceName(giftLog.getEventAcquaintance().getAcquaintance().getName())
+                .eventType(giftLog.getEventAcquaintance().getEvent().getEventType().name())
+                .eventName(giftLog.getEventAcquaintance().getEvent().getEventName())
+                .eventDate(giftLog.getEventAcquaintance().getEvent().getEventDate().format(formatter))
+                .location(giftLog.getEventAcquaintance().getEvent().getLocation())
                 .build();
     }
 }

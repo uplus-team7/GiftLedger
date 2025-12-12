@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import springboot.giftledger.analysis.dto.DashboardDto;
 import springboot.giftledger.analysis.dto.PatternDto;
 import springboot.giftledger.analysis.dto.RecentEventDto;
+import springboot.giftledger.analysis.dto.RelationDto;
 import springboot.giftledger.entity.GiftLog;
 import springboot.giftledger.entity.Member;
 import springboot.giftledger.repository.GiftLogRepository;
@@ -12,10 +13,7 @@ import springboot.giftledger.repository.MemberRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -156,4 +154,95 @@ public class AnalysisServiceImpl implements AnalysisService {
 
         return eventTypeData;
     }
+
+
+
+
+
+    @Override
+    public RelationDto getRelation(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        Long memberId = member.getMemberId();
+
+        // 1. TOP 5 지인
+        List<RelationDto.TopRelation> topRelations = getTopRelations(memberId);
+
+        // 2. 지인별 회수율
+        List<RelationDto.RelationRecovery> relationRecovery = getRelationRecovery(memberId);
+
+        return RelationDto.builder()
+                .topRelations(topRelations)
+                .relationRecovery(relationRecovery)
+                .build();
+    }
+
+    // TOP 5 지인 처리
+    private List<RelationDto.TopRelation> getTopRelations(Long memberId) {
+        List<Object[]> results = giftLogRepository.getTopRelations(memberId);
+
+        return results.stream()
+                .limit(5)  // TOP 5만
+                .map(row -> {
+                    String name = (String) row[0];
+                    Long totalAmount = ((Number) row[1]).longValue();
+                    Integer eventCount = ((Number) row[2]).intValue();
+                    Long avgAmount = totalAmount / eventCount;
+
+                    return RelationDto.TopRelation.builder()
+                            .name(name)
+                            .totalAmount(totalAmount)
+                            .eventCount(eventCount)
+                            .avgAmount(avgAmount)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 지인별 회수율 처리
+    private List<RelationDto.RelationRecovery> getRelationRecovery(Long memberId) {
+        // GIVE 데이터
+        List<Object[]> giveResults = giftLogRepository.getGiveByAcquaintance(memberId);
+        Map<String, Long> giveMap = new HashMap<>();
+        for (Object[] row : giveResults) {
+            String name = (String) row[0];
+            Long amount = ((Number) row[1]).longValue();
+            giveMap.put(name, amount);
+        }
+
+        // TAKE 데이터
+        List<Object[]> takeResults = giftLogRepository.getTakeByAcquaintance(memberId);
+        Map<String, Long> takeMap = new HashMap<>();
+        for (Object[] row : takeResults) {
+            String name = (String) row[0];
+            Long amount = ((Number) row[1]).longValue();
+            takeMap.put(name, amount);
+        }
+
+        // 모든 지인 이름 수집 (GIVE만 있거나, TAKE만 있을 수도 있음)
+        Set<String> allNames = new HashSet<>();
+        allNames.addAll(giveMap.keySet());
+        allNames.addAll(takeMap.keySet());
+
+        // 회수율 계산
+        return allNames.stream()
+                .map(name -> {
+                    Long give = giveMap.getOrDefault(name, 0L);
+                    Long take = takeMap.getOrDefault(name, 0L);
+                    Double rate = give > 0
+                            ? Math.round((take.doubleValue() / give.doubleValue()) * 1000.0) / 10.0
+                            : 0.0;
+
+                    return RelationDto.RelationRecovery.builder()
+                            .name(name)
+                            .give(give)
+                            .take(take)
+                            .rate(rate)
+                            .build();
+                })
+                .sorted((a, b) -> Long.compare(b.getGive(), a.getGive()))  // GIVE 금액 내림차순
+                .collect(Collectors.toList());
+    }
+
 }

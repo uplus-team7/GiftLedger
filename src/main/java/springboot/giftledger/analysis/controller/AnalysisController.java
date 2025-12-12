@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springboot.giftledger.analysis.dto.DashboardDto;
 import springboot.giftledger.analysis.dto.PatternDto;
 import springboot.giftledger.analysis.dto.RecentEventDto;
+import springboot.giftledger.analysis.dto.RelationDto;
 import springboot.giftledger.analysis.service.AnalysisService;
 
 import java.time.LocalDate;
@@ -50,5 +51,13 @@ public class AnalysisController {
 
         PatternDto pattern = analysisService.getPattern(email, year);
         return ResponseEntity.ok(pattern);
+    }
+
+    @GetMapping("/relation")
+    public ResponseEntity<RelationDto> getRelation(
+            @AuthenticationPrincipal String email) {
+
+        RelationDto relation = analysisService.getRelation(email);
+        return ResponseEntity.ok(relation);
     }
 }

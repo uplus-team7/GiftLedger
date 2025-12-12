@@ -12,67 +12,75 @@ import java.util.List;
 
 @Repository
 public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
-    @Query("""
-        SELECT AVG(g.amount)
-        FROM GiftLog g
-        JOIN g.event e
-        JOIN e.acquaintance a
-        JOIN a.member m
-        WHERE m.ages = :ages
-        AND e.eventType = :eventType
-        AND g.actionType = :actionType
-    """)
+    @Query("SELECT AVG(g.amount) " +
+            "FROM GiftLog g " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "JOIN e.member m " +
+            "WHERE m.ages = :ages " +
+            "AND e.eventType = :eventType " +
+            "AND g.actionType = :actionType")
     Double findAverageAmountByAgesAndEventTypeAndActionType(
             @Param("ages") String ages,
             @Param("eventType") EventType eventType,
-            @Param("actionType") ActionType actionType
-    );
+            @Param("actionType") ActionType actionType);
 
-    @Query("""
-        SELECT COUNT(g)
-        FROM GiftLog g
-        JOIN g.event e
-        JOIN e.acquaintance a
-        JOIN a.member m
-        WHERE m.ages = :ages
-        AND e.eventType = :eventType
-        AND g.actionType = :actionType
-    """)
+    // 연령대, 이벤트 타입, 액션 타입별 총 건수
+    @Query("SELECT COUNT(g) " +
+            "FROM GiftLog g " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "JOIN e.member m " +
+            "WHERE m.ages = :ages " +
+            "AND e.eventType = :eventType " +
+            "AND g.actionType = :actionType")
     Long countByAgesAndEventTypeAndActionType(
             @Param("ages") String ages,
             @Param("eventType") EventType eventType,
-            @Param("actionType") ActionType actionType
-    );
+            @Param("actionType") ActionType actionType);
 
+    // ===== 1번 대시보드용 쿼리 =====
 
+    // 사용자의 총 지출 금액 (GIVE)
     @Query("SELECT COALESCE(SUM(g.amount), 0) FROM GiftLog g " +
-            "WHERE g.event.acquaintance.member.memberId = :memberId " +
-            "AND g.actionType = 'GIVE'")
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId AND g.actionType = 'GIVE'")
     Long getTotalGiveByMemberId(@Param("memberId") Long memberId);
 
+    // 사용자의 총 수입 금액 (TAKE)
     @Query("SELECT COALESCE(SUM(g.amount), 0) FROM GiftLog g " +
-            "WHERE g.event.acquaintance.member.memberId = :memberId " +
-            "AND g.actionType = 'TAKE'")
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId AND g.actionType = 'TAKE'")
     Long getTotalTakeByMemberId(@Param("memberId") Long memberId);
 
+    // 특정 년도의 지출 금액
     @Query("SELECT COALESCE(SUM(g.amount), 0) FROM GiftLog g " +
-            "WHERE g.event.acquaintance.member.memberId = :memberId " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
             "AND g.actionType = 'GIVE' " +
-            "AND YEAR(g.event.eventDate) = :year")
+            "AND YEAR(e.eventDate) = :year")
     Long getYearlyGiveByMemberId(@Param("memberId") Long memberId, @Param("year") int year);
 
+    // 최근 이벤트 5개
     @Query("SELECT g FROM GiftLog g " +
-            "WHERE g.event.acquaintance.member.memberId = :memberId " +
-            "ORDER BY g.event.eventDate DESC")
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
+            "ORDER BY e.eventDate DESC")
     List<GiftLog> findTop5ByMemberIdOrderByEventDateDesc(@Param("memberId") Long memberId);
 
+
+    // ===== 2번 지출 패턴 분석용 쿼리 =====
 
     // 특정 연도의 월별 지출 (1~12월)
     @Query("SELECT MONTH(e.eventDate) as month, SUM(g.amount) as amount " +
             "FROM GiftLog g " +
-            "JOIN g.event e " +
-            "JOIN e.acquaintance a " +
-            "WHERE a.member.memberId = :memberId " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
             "AND g.actionType = 'GIVE' " +
             "AND YEAR(e.eventDate) = :year " +
             "GROUP BY MONTH(e.eventDate)")
@@ -82,9 +90,9 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
     // 특정 연도의 요일별 평균 지출 (일~토)
     @Query("SELECT DAYOFWEEK(e.eventDate) as dayOfWeek, AVG(g.amount) as avgAmount " +
             "FROM GiftLog g " +
-            "JOIN g.event e " +
-            "JOIN e.acquaintance a " +
-            "WHERE a.member.memberId = :memberId " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
             "AND g.actionType = 'GIVE' " +
             "AND YEAR(e.eventDate) = :year " +
             "GROUP BY DAYOFWEEK(e.eventDate)")
@@ -94,12 +102,49 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
     // 특정 연도의 이벤트 타입별 분포 (결혼식, 장례식, 생일, 기타)
     @Query("SELECT e.eventType, COUNT(g), SUM(g.amount) " +
             "FROM GiftLog g " +
-            "JOIN g.event e " +
-            "JOIN e.acquaintance a " +
-            "WHERE a.member.memberId = :memberId " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
             "AND g.actionType = 'GIVE' " +
             "AND YEAR(e.eventDate) = :year " +
             "GROUP BY e.eventType")
     List<Object[]> getEventTypeDistribution(@Param("memberId") Long memberId,
                                             @Param("year") int year);
+
+
+    // ===== 3번 지인 분석용 쿼리 =====
+
+    // TOP 5 지인 (총 지출액 기준)
+    @Query("SELECT a.name, SUM(g.amount) as totalAmount, COUNT(g) as eventCount " +
+            "FROM GiftLog g " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.acquaintance a " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
+            "AND g.actionType = 'GIVE' " +
+            "GROUP BY a.acquaintanceId, a.name " +
+            "ORDER BY totalAmount DESC")
+    List<Object[]> getTopRelations(@Param("memberId") Long memberId);
+
+    // 지인별 GIVE 총액
+    @Query("SELECT a.name, SUM(g.amount) " +
+            "FROM GiftLog g " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.acquaintance a " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
+            "AND g.actionType = 'GIVE' " +
+            "GROUP BY a.acquaintanceId, a.name")
+    List<Object[]> getGiveByAcquaintance(@Param("memberId") Long memberId);
+
+    // 지인별 TAKE 총액
+    @Query("SELECT a.name, SUM(g.amount) " +
+            "FROM GiftLog g " +
+            "JOIN g.eventAcquaintance ea " +
+            "JOIN ea.acquaintance a " +
+            "JOIN ea.event e " +
+            "WHERE e.member.memberId = :memberId " +
+            "AND g.actionType = 'TAKE' " +
+            "GROUP BY a.acquaintanceId, a.name")
+    List<Object[]> getTakeByAcquaintance(@Param("memberId") Long memberId);
 }
