@@ -18,6 +18,10 @@ public class GiftLog {
     private Long giftId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "acquaintance_id", nullable = false)
+    private Acquaintance acquaintance;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 

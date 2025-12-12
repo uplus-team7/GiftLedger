@@ -33,7 +33,7 @@ public class EventServiceImpl implements EventService {
 
         // memberId에 대한 db 확인 중복..어떻게? 최적화 필요.
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException(("존재하지 않는 회원 ID 입니다.")));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 ID 입니다."));
 
         Acquaintance acquaintance = acquaintanceRepository.findByPhone(acquaintanceDto.getPhone());
 
@@ -89,5 +89,34 @@ public class EventServiceImpl implements EventService {
                 .eventDto(eventDto)
                 .giftLogDto(giftLogDto)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public EventResultDto deleteEvent(String email, Long giftId) {
+        // member 존재 확인
+        // giftLogId로 삭제
+        giftLogRepository.deleteByGiftId(giftId);
+
+        log.info("[EventService - deleteEvent] Gift 내역 삭제 완료.");
+
+        return EventResultDto.builder()
+                .result("success")
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public EventResultDto detailsEvent(String email, Long eventId) {
+        // email로 memberId 조회
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 ID 입니다."));
+
+        // => 한번에 조회해서, result로 묶어 보내면 -> 프론트에서 처리.
+        // 하나의 이벤트에 무수히 많은 지인들과 그와 연결된 기프트로그
+        // 즉, 하나의 이벤트 : 지인-기프트로그 리스트
+        eventRepository.findDetailsByEventId(email, eventId);
+
+        return null;
     }
 }

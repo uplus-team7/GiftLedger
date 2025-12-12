@@ -5,6 +5,7 @@ import lombok.*;
 import springboot.giftledger.enums.EventType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,8 +19,8 @@ public class Event {
     private Long eventId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "acquaintance_id", nullable = false)
-    private Acquaintance acquaintance;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -38,4 +39,6 @@ public class Event {
     private Boolean isOwner;
 
 
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private List<GiftLog> giftLogs;
 }
