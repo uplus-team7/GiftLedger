@@ -343,6 +343,17 @@
             transition: all 0.3s ease;
         }
 
+        .btn-insert {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-insert:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
         .btn-edit {
             background: #667eea;
             color: white;
@@ -439,6 +450,41 @@
         .modal-btn-confirm:hover {
             background: #e03e4a;
         }
+
+        /* 폼 스타일 (등록 페이지 스타일 참고) */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            width: 100%; /* 모달 내에서 꽉 차게 */
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* 필수 항목 표시 (빨간 별) */
+        .required {
+            color: #ff4757;
+            margin-left: 3px;
+        }
     </style>
 </head>
 <body>
@@ -497,26 +543,85 @@
                 </div>
 
                 <!-- 액션 버튼 -->
-                <!-- <div class="action-buttons">
-                    <button class="btn btn-delete" onclick="showDeleteModal()">삭제</button>
-                    <button class="btn btn-edit" onclick="editEvent()">수정</button>
-                </div> -->
+                <div class="action-buttons">
+                    <button class="btn-sm btn-insert" onclick="showInsertNewLogModal()">추가</button>
+<!--                    <button class="btn btn-edit" onclick="editEvent()">수정</button>-->
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 삭제 확인 모달 -->
-<div class="modal" id="deleteModal">
-    <div class="modal-content">
-        <div class="modal-title">이벤트 내역 삭제</div>
-        <div class="modal-text">
-            이 이벤트 내역을 삭제하시겠습니까?<br>
-            삭제된 데이터는 복구할 수 없습니다.
+<!-- giftLog 추가 모달 -->
+<div class="modal" id="insertModal">
+    <div class="modal-content" style="text-align: left; max-width: 500px;">
+        <div class="modal-title" style="text-align: center; margin-bottom: 25px;">새 내역 추가</div>
+
+        <div class="modal-body">
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addName">이름<span class="required">*</span></label>
+                    <input type="text" id="addName" class="form-input" placeholder="이름 입력">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addPhone">연락처<span class="required">*</span></label>
+                    <input type="tel" id="addPhone" class="form-input" placeholder="010-0000-0000">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addRelation">관계<span class="required">*</span></label>
+                    <select id="addRelation" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="FRIEND">친구</option>
+                        <option value="FAMILY">가족</option>
+                        <option value="COWORKER">직장동료</option>
+                        <option value="ETC">기타</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addGroupName">상세 그룹</label>
+                    <input type="text" id="addGroupName" class="form-input" placeholder="예: 대학동기">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addAmount">금액<span class="required">*</span></label>
+                    <input type="number" id="addAmount" class="form-input" placeholder="0">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addActionType">입출금 구분<span class="required">*</span></label>
+                    <select id="addActionType" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="TAKE">입금 (받음)</option>
+                        <option value="GIVE">출금 (보냄)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addPayMethod">지불 방법<span class="required">*</span></label>
+                    <select id="addPayMethod" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="CASH">현금</option>
+                        <option value="BANK_TRANSFER">계좌이체</option>
+                        <option value="KAKAOPAY">카카오페이</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addMemo">비고</label>
+                    <input type="text" id="addMemo" class="form-input" placeholder="메모 입력">
+                </div>
+            </div>
+
         </div>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">취소</button>
-            <button class="modal-btn modal-btn-confirm" onclick="deleteEvent()">삭제</button>
+
+        <div class="modal-buttons" style="margin-top: 20px;">
+            <button class="modal-btn modal-btn-cancel" onclick="closeInsertNewLogModal()">취소</button>
+            <button class="modal-btn modal-btn-confirm" style="background: #667eea;" onclick="submitGuestLog()">추가하기</button>
         </div>
     </div>
 </div>
@@ -694,14 +799,80 @@
         card.classList.toggle('active');
     }
 
-    // 삭제 모달 표시
-    function showDeleteModal() {
-        document.getElementById('deleteModal').classList.add('show');
+    // 추가 모달 표시
+    function showInsertNewLogModal() {
+        document.getElementById('addName').value = '';
+        document.getElementById('addPhone').value = '';
+        document.getElementById('addGroupName').value = '';
+        document.getElementById('addAmount').value = '';
+        document.getElementById('addMemo').value = '';
+        document.getElementById('addRelation').value = '';
+        document.getElementById('addActionType').value = '';
+        document.getElementById('addPayMethod').value = '';
+
+        document.getElementById('insertModal').classList.add('show');
     }
 
-    // 삭제 모달 닫기
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.remove('show');
+    // 추가 모달 닫기
+    function closeInsertNewLogModal() {
+        document.getElementById('insertModal').classList.remove('show');
+    }
+
+    // 이벤트 내역 추가
+    async function submitGuestLog() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+
+        const formData = {
+            name: document.getElementById('addName').value,
+            phone: document.getElementById('addPhone').value,
+            relation: document.getElementById('addRelation').value,
+            groupName: document.getElementById('addGroupName').value,
+            actionType: document.getElementById('addActionType').value,
+            amount: document.getElementById('addAmount').value,
+            payMethod: document.getElementById('addPayMethod').value,
+            memo: document.getElementById('addMemo').value
+        };
+
+        let jsonParams = {
+            acquaintanceDto: {
+                name: formData.name,
+                relation: formData.relation,
+                groupName: formData.groupName,
+                phone: formData.phone
+            },
+            giftLogDto: {
+                actionType: formData.actionType,
+                amount: Number(formData.amount),
+                payMethod: formData.payMethod,
+                memo: formData.memo
+            }
+        };
+
+        let url = `/events/${eventId}`;
+        let token = sessionStorage.getItem('authToken');
+
+        try {
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-AUTH-TOKEN': token
+                },
+                body: JSON.stringify(jsonParams)
+            });
+
+            if (response.ok) {
+                alert("성공적으로 추가되었습니다.");
+                closeInsertNewLogModal();
+                window.location.reload();
+            } else {
+                alert("추가에 실패했습니다. 입력 값을 확인해주세요.");
+            }
+        } catch (error) {
+            console.error("서버 통신 오류:", error);
+            alert("서버 오류가 발생했습니다.");
+        }
     }
 
     // 이벤트 삭제
@@ -728,8 +899,6 @@
 
         } catch (error) {
             console.error('이벤트 내역 삭제 중 오류 발생:', error);
-        } finally {
-            closeDeleteModal();
         }
     }
 

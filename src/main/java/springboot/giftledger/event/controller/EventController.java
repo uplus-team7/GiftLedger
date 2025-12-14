@@ -76,7 +76,7 @@ public class EventController {
             @PathVariable Long giftId) {
 
         log.info("[EventController - deleteEvent] 사용자 정보 email: {}", email);
-        log.info("[EventController - deleteEvent] eventId: {}", giftId);
+        log.info("[EventController - deleteEvent] giftId: {}", giftId);
 
         try {
             EventResultDto eventResultDto = eventService.deleteEvent(email, giftId);
@@ -94,5 +94,31 @@ public class EventController {
                     .body(EventResultDto.builder().result("fail").build());
         }
 
+    }
+
+    @PostMapping("/{eventId}")
+    public ResponseEntity<EventDetailsResultDto> insertEventOnDetails(
+            @AuthenticationPrincipal String email,
+            @PathVariable Long eventId,
+            @RequestBody EventRequestDto eventRequestDto
+    ){
+        log.info("[EventController - insertEventOnDetails] 사용자 정보 email: {}", email);
+        log.info("[EventController - insertEventOnDetails] eventId: {}", eventId);
+
+        try {
+            EventDetailsResultDto eventDetailsResultDto = eventService.insertEventOnDetails(email, eventId, eventRequestDto);
+
+            log.info("[EventController - insertEventOnDetails] eventDetailsResultDto: {}", eventDetailsResultDto);
+            if ("success".equals(eventDetailsResultDto.getResult())) {
+                return ResponseEntity.ok(eventDetailsResultDto);
+            } else {
+                log.warn("[EventController - insertEventOnDetails] eventDetailsResultDto 등록 실패: {}", eventDetailsResultDto);
+                return ResponseEntity.status(401).body(EventDetailsResultDto.builder().result("fail").build());
+            }
+        } catch (Exception e) {
+            log.error("[EventController - insertEventOnDetails] 서버 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+                    .body(EventDetailsResultDto.builder().result("fail").build());
+        }
     }
 }

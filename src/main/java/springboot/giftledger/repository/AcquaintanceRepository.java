@@ -12,4 +12,5 @@ public interface AcquaintanceRepository extends JpaRepository<Acquaintance,Long>
     Acquaintance findByPhone_AndMember(String phone, Member member);
 //    Acquaintance findByPhone_AndMember_Email(String phone, String email);
 
+    Acquaintance findByPhone_AndMember_Email(String phone, String email);
 }

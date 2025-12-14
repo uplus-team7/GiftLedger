@@ -18,6 +18,4 @@ public interface EventRepository extends JpaRepository<Event, Long>{
     Event findDetailsByEventId(
             @Param("email") String email,
             @Param("eventId") Long eventId);
-
-
 }

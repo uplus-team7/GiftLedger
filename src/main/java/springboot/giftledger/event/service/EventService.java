@@ -10,4 +10,6 @@ public interface EventService {
     EventResultDto deleteEvent(String email, Long eventId);
 
     EventDetailsResultDto detailsEvent(String email, Long eventId);
+
+    EventDetailsResultDto insertEventOnDetails(String email, Long eventId, EventRequestDto eventRequestDto);
 }
