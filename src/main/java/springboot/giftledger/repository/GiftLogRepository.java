@@ -6,6 +6,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import springboot.giftledger.entity.EventAcquaintance;
 import springboot.giftledger.entity.GiftLog;
+import springboot.giftledger.enums.ActionType;
+import springboot.giftledger.enums.EventType;
 
 import java.util.List;
 
@@ -102,7 +104,6 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
     void deleteByGiftId(Long giftId);
 
     List<GiftLog> findAllByEventAcquaintance(EventAcquaintance eventAcquaintance);
-}
 
     // 특정 연도의 이벤트 타입별 분포 (결혼식, 장례식, 생일, 기타)
     @Query("SELECT e.eventType, COUNT(g), SUM(g.amount) " +
