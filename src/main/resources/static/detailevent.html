@@ -574,10 +574,10 @@
                     <label class="form-label" for="addRelation">관계<span class="required">*</span></label>
                     <select id="addRelation" class="form-select">
                         <option value="">선택하세요</option>
-                        <option value="FRIEND">친구</option>
-                        <option value="FAMILY">가족</option>
-                        <option value="COWORKER">직장동료</option>
-                        <option value="ETC">기타</option>
+                        <option value="친구">친구</option>
+                        <option value="가족">가족</option>
+                        <option value="직장동료">직장동료</option>
+                        <option value="기타">기타</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;">
@@ -595,8 +595,8 @@
                     <label class="form-label" for="addActionType">입출금 구분<span class="required">*</span></label>
                     <select id="addActionType" class="form-select">
                         <option value="">선택하세요</option>
-                        <option value="TAKE">입금 (받음)</option>
-                        <option value="GIVE">출금 (보냄)</option>
+                        <option value="입금">입금 (받음)</option>
+                        <option value="출금">출금 (보냄)</option>
                     </select>
                 </div>
             </div>
@@ -606,9 +606,9 @@
                     <label class="form-label" for="addPayMethod">지불 방법<span class="required">*</span></label>
                     <select id="addPayMethod" class="form-select">
                         <option value="">선택하세요</option>
-                        <option value="CASH">현금</option>
-                        <option value="BANK_TRANSFER">계좌이체</option>
-                        <option value="KAKAOPAY">카카오페이</option>
+                        <option value="현금">현금</option>
+                        <option value="계좌이체">계좌이체</option>
+                        <option value="카카오페이">카카오페이</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;">
@@ -694,7 +694,7 @@
 
         const badge = document.getElementById('transactionType');
         if (badge) {
-            if (firstLog && firstLog.giftLogDto.actionType === 'GIVE') {
+            if (firstLog && firstLog.giftLogDto.actionType === '보냄') {
                 badge.innerText = '출금';
                 badge.className = 'transaction-badge expense-badge';
             } else {
@@ -724,8 +724,8 @@
             console.log('cardId:', cardId);
             
             // 뱃지 스타일 결정
-            const badgeClass = log.actionType === 'GIVE' ? 'expense-badge' : 'income-badge';
-            const badgeText = log.actionType === 'GIVE' ? '출금' : '입금';
+            const badgeClass = log.actionType === '보냄' ? 'expense-badge' : 'income-badge';
+            const badgeText = log.actionType === '보냄' ? '출금' : '입금';
 
             const itemHtml = `
                 <div class="detail-card-item" id="${cardId}">
@@ -905,7 +905,7 @@
     // 이벤트 수정
     function editEvent(targetGiftId) {
         // 수정 페이지로 이동 (등록 페이지를 수정 모드로 재사용 가능)
-        window.location.href = `event-edit.html?id=${targetGiftId}`;
+        window.location.href = `eventupdate.html?id=${targetGiftId}`;
     }
 
     function setText(id, text) {

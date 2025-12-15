@@ -2,6 +2,7 @@ package springboot.giftledger.event.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class EventDto {
     private String eventType;
     private LocalDateTime eventDate;
     private String location;
+    @JsonProperty("isOwner")
     private boolean isOwner;
     
     private Long totalAmount;

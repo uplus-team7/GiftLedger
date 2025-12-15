@@ -310,10 +310,10 @@
                             </label>
                             <select class="form-select" id="relationship" required>
                                 <option value="">선택하세요</option>
-                                <option value="FAMILY">가족</option>
-                                <option value="FRIEND">친구</option>
-                                <option value="COWORKER">직장동료</option>
-                                <option value="ETC">기타</option>
+                                <option value="가족">가족</option>
+                                <option value="친구">친구</option>
+                                <option value="직장동료">직장동료</option>
+                                <option value="기타">기타</option>
                             </select>
                         </div>
 
@@ -336,10 +336,10 @@
                             </label>
                             <select class="form-select" id="eventType" required>
                                 <option value="">선택하세요</option>
-                                <option value="WEDDING">결혼</option>
-                                <option value="FUNERAL">장례</option>
-                                <option value="BIRTHDAY">돌잔치</option>
-                                <option value="ETC">기타</option>
+                                <option value="결혼">결혼</option>
+                                <option value="장례">장례</option>
+                                <option value="생일">돌잔치</option>
+                                <option value="기타">기타</option>
                             </select>
                         </div>
 
@@ -401,11 +401,11 @@
                             </label>
                             <div class="radio-group">
                                 <div class="radio-option">
-                                    <input type="radio" id="income" name="transactionType" value="TAKE" required>
+                                    <input type="radio" id="income" name="transactionType" value="income" required>
                                     <label for="income">입금 (받음)</label>
                                 </div>
                                 <div class="radio-option">
-                                    <input type="radio" id="expense" name="transactionType" value="GIVE" checked>
+                                    <input type="radio" id="expense" name="transactionType" value="expense" checked>
                                     <label for="expense">출금 (보냄)</label>
                                 </div>
                             </div>
@@ -418,9 +418,9 @@
                             </label>
                             <select class="form-select" id="paymentMethod" required>
                                 <option value="">선택하세요</option>
-                                <option value="CASH">현금</option>
-                                <option value="BANK_TRANSFER">계좌이체</option>
-                                <option value="KAKAOPAY">카카오페이</option>
+                                <option value="현금">현금</option>
+                                <option value="계좌이체">계좌이체</option>
+                                <option value="카카오페이">카카오페이</option>
                                 <!-- <option value="기타">기타</option> -->
                             </select>
                         </div>
@@ -477,7 +477,7 @@
             location: document.getElementById('location').value,
             isHost: document.querySelector('input[name="isHost"]:checked').value,
             amount: document.getElementById('amount').value,
-            transactionType: document.querySelector('input[name="transactionType"]:checked').value,
+            transactionType: document.querySelector('input[name="transactionType"]:checked').value === 'income' ? '입금' : '출금',
             paymentMethod: document.getElementById('paymentMethod').value,
             memo: document.getElementById('memo').value
         };

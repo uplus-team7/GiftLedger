@@ -268,7 +268,8 @@
 </div>
 
 <script>
-    const eventId = new URLSearchParams(location.search).get('eventId');
+    const eventId = new URLSearchParams(location.search).get('id');
+    console.log(eventId);
     const authToken = sessionStorage.getItem('authToken');
 
     document.addEventListener('DOMContentLoaded', loadEvent);
