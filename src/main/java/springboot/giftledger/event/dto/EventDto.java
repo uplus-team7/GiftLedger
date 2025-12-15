@@ -17,8 +17,10 @@ public class EventDto {
 
     private Long eventId;
     private String eventName;
-    private EventType eventType;
+    private String eventType;
     private LocalDateTime eventDate;
     private String location;
     private boolean isOwner;
+    
+    private Long totalAmount;
 }

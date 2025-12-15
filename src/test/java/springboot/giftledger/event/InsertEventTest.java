@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import springboot.giftledger.acquaintance.dto.AcquaintanceDto;
 import springboot.giftledger.entity.Member;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.EventType;
@@ -43,11 +45,11 @@ public class InsertEventTest {
         // DTO 빌더를 사용하여 유효한 요청 데이터 생성
         return EventRequestDto.builder()
                 .eventDto(EventDto.builder()
-                        .eventType(EventType.WEDDING).eventName("테스트 결혼식").eventDate(LocalDateTime.parse("2026-05-20")).isOwner(false).location("한남동 호텔").build())
+                        .eventType(EventType.WEDDING.getDescription()).eventName("테스트 결혼식").eventDate(LocalDateTime.parse("2026-05-20")).isOwner(false).location("한남동 호텔").build())
                 .acquaintanceDto(AcquaintanceDto.builder()
-                        .name("테스트 지인").phone("010-9999-9999").relation(Relation.FRIEND).build())
+                        .name("테스트 지인").phone("010-9999-9999").relation(Relation.FRIEND.getDescription()).build())
                 .giftLogDto(GiftLogDto.builder()
-                        .actionType(ActionType.GIVE).amount(50000L).payMethod(PayMethod.CASH).build())
+                        .actionType(ActionType.GIVE.getDescription()).amount(50000L).payMethod(PayMethod.CASH.getDescription()).build())
                 .build();
     }
 

@@ -22,4 +22,6 @@ public interface EventRepository extends JpaRepository<Event, Long>{
     Event findDetailsByEventId(
             @Param("email") String email,
             @Param("eventId") Long eventId);
+    
+    Page<Event> findByMember_Email(String email, Pageable pageable);
 }

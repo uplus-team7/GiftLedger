@@ -42,6 +42,6 @@ public class Event {
     private Boolean isOwner;
 
 
-//    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
-//    private List<EventAcquaintance> eventAcquaintances;
+    @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
+    private List<EventAcquaintance> eventAcquaintances;
 }

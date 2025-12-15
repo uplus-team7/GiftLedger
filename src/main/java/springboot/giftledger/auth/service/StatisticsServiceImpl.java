@@ -1,7 +1,8 @@
 package springboot.giftledger.auth.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import springboot.giftledger.auth.dto.StatisticsDto;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.EventType;
@@ -11,7 +12,7 @@ import springboot.giftledger.repository.GiftLogRepository;
 @Service
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService{
-
+	
     private final GiftLogRepository giftLogRepository;
 
     @Override

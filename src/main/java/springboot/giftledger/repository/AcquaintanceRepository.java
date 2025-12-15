@@ -11,7 +11,10 @@ import springboot.giftledger.entity.Acquaintance;
 import springboot.giftledger.entity.Member;
 
 public interface AcquaintanceRepository extends JpaRepository<Acquaintance,Long> {
-    boolean existsByPhone(String phone);
+    
+	Page<Acquaintance> findByMemberEmail(String email,Pageable pageable);
+	
+	boolean existsByPhone(String phone);
 
     Acquaintance findByPhone(String phone);
 

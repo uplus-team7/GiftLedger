@@ -1,3 +1,6 @@
+server:
+  port: 9090
+
 spring:
   application:
     name: GiftLedger
@@ -5,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/giftledger
     username: root
-    password: 1234
+    password: hhs17629451
 
   jpa:
     show-sql: true

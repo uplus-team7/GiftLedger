@@ -17,7 +17,7 @@ public class GiftLogDto {
 
     private Long giftLogId;
     private Long amount;
-    private ActionType actionType;
-    private PayMethod payMethod;
+    private String actionType;
+    private String payMethod;
     private String memo;
 }
