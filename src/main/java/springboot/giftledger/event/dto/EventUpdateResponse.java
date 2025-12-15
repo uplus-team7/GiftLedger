@@ -6,12 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import springboot.giftledger.acquaintance.dto.AcquaintanceDto;
 
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventRequestDto {
-    private EventDto eventDto;
-    private AcquaintanceDto acquaintanceDto;
-    private GiftLogDto giftLogDto;
+public class EventUpdateResponse {
+
+	private AcquaintanceDto acquaintance;
+	private EventDto event;
+	private GiftLogDto giftLog;
+
 }

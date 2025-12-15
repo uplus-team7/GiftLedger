@@ -1,21 +1,22 @@
-package springboot.giftledger.event.dto;
+package springboot.giftledger.acquaintance.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import springboot.giftledger.enums.Relation;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class AcquaintanceDto {
-
+	
     private Long acquaintanceId;
     private Long memberId;
     private String name;
-    private Relation relation;
+    private String relation;
     private String groupName;
     private String phone;
+
+    
 }

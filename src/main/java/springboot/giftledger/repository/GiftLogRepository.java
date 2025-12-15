@@ -1,18 +1,38 @@
 package springboot.giftledger.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 import springboot.giftledger.entity.EventAcquaintance;
 import springboot.giftledger.entity.GiftLog;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.EventType;
 
-import java.util.List;
-
 @Repository
 public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
+	
+	
+	
+    @Query("SELECT COALESCE(SUM(g.amount), 0) " +
+            "FROM GiftLog g " +
+            "WHERE g.eventAcquaintance.event.eventId = :eventId")
+    Long sumAmountByEventId(@Param("eventId") Long eventId);
+    
+    
+    @Query("""
+    	    select g
+    	    from GiftLog g
+    	    join g.eventAcquaintance ea
+    	    where ea.event.eventId = :eventId
+    	    order by g.giftId asc
+    	""")
+    	Optional<GiftLog> findFirstByEventId(@Param("eventId") Long eventId);
+
     @Query("SELECT AVG(g.amount) " +
             "FROM GiftLog g " +
             "JOIN g.eventAcquaintance ea " +

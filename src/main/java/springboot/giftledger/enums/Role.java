@@ -14,4 +14,14 @@ public enum Role {
     public String getDescription() {
         return description;
     }
+    
+    
+    public static Role fromDescription(String description) {
+        for (Role type : Role.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown description: " + description);
+    }
 }

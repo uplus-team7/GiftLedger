@@ -10,8 +10,9 @@ import springboot.giftledger.acquaintance.dto.AcquaintanceDto;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventRequestDto {
-    private EventDto eventDto;
-    private AcquaintanceDto acquaintanceDto;
-    private GiftLogDto giftLogDto;
+public class EventUpdateRequest {
+
+	private EventDto event;
+	private AcquaintanceDto acquaintance;
+	private GiftLogDto giftLog;
 }

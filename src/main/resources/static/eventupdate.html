@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이벤트 수정 - 축의금 관리 시스템</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 16.66%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-btn {
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid #667eea;
+            background: white;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+        }
+
+        .sidebar-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 메인 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-actions {
+            margin-top: 40px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="sidebar">
+        <button class="sidebar-btn active">이벤트 수정</button>
+        <button class="sidebar-btn" onclick="location.href='event-search.html'">이벤트 조회</button>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h2>축의금 관리 시스템</h2>
+            <button onclick="logout()">로그아웃</button>
+        </div>
+
+        <div class="content">
+            <div class="content-card">
+                <div class="page-title">이벤트 수정</div>
+
+                <form id="eventForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>지인 이름</label>
+                            <input id="friendName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>관계</label>
+                            <select id="relationship" required>
+                                <option value="">선택</option>
+                                <option value="가족">가족</option>
+                                <option value="친구">친구</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>상세 그룹</label>
+                            <input id="detailGroup">
+                        </div>
+
+                        <div class="form-group">
+                            <label>연락처</label>
+                            <input id="phone">
+                        </div>
+
+                        <div class="form-group">
+                            <label>경조사 종류</label>
+                            <select id="eventType" required>
+                                <option value="">선택</option>
+                                <option value="결혼">결혼</option>
+                                <option value="장례">장례</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>행사명</label>
+                            <input id="eventName">
+                        </div>
+
+                        <div class="form-group">
+                            <label>행사 날짜</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>행사 시간</label>
+                            <input type="time" id="eventTime">
+                        </div>
+
+                        <div class="form-group full">
+                            <label>장소</label>
+                            <input id="location">
+                        </div>
+
+                        <div class="form-group">
+                            <label>주최자 여부</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="isHost" value="yes"> 주최자</label>
+                                <label><input type="radio" name="isHost" value="no"> 참석자</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>금액</label>
+                            <input type="number" id="amount" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>입출금 구분</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="transactionType" value="income"> 입금</label>
+                                <label><input type="radio" name="transactionType" value="expense"> 출금</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>지급 방법</label>
+                            <select id="paymentMethod" required>
+                                <option value="">선택</option>
+                                <option value="현금">현금</option>
+                                <option value="계좌이체">계좌이체</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full">
+                            <label>메모</label>
+                            <textarea id="memo"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">수정 완료</button>
+                        <button type="button" class="btn btn-secondary" onclick="location.href='/detailevent.html'">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const eventId = new URLSearchParams(location.search).get('eventId');
+    const authToken = sessionStorage.getItem('authToken');
+
+    document.addEventListener('DOMContentLoaded', loadEvent);
+
+    async function loadEvent() {
+        const res = await fetch(`/events/${eventId}`, {
+            headers: { 'X-AUTH-TOKEN': authToken }
+        });
+        const json = await res.json();
+        const { event, acquaintance, giftLog } = json.data;
+
+        friendName.value = acquaintance.name;
+        relationship.value = acquaintance.relation;
+        detailGroup.value = acquaintance.groupName || '';
+        phone.value = acquaintance.phone || '';
+
+        eventType.value = event.eventType;
+        eventName.value = event.eventName || '';
+
+        const [d, t] = event.eventDate.split('T');
+        eventDate.value = d;
+        eventTime.value = t?.substring(0,5) || '';
+
+        location.value = event.location || '';
+        document.querySelector(`input[name=isHost][value=${event.isOwner ? 'yes' : 'no'}]`).checked = true;
+
+        amount.value = giftLog.amount;
+        document.querySelector(`input[name=transactionType][value=${giftLog.actionType === '입금' ? 'income' : 'expense'}]`).checked = true;
+        paymentMethod.value = giftLog.payMethod;
+        memo.value = giftLog.memo || '';
+    }
+
+    document.getElementById('eventForm').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const body = {
+            acquaintance: {
+                name: friendName.value,
+                relation: relationship.value,
+                groupName: detailGroup.value,
+                phone: phone.value
+            },
+            event: {
+                eventId,
+                eventType: eventType.value,
+                eventName: eventName.value,
+                eventDate: `${eventDate.value}T${eventTime.value || '00:00'}`,
+                location: location.value,
+                isOwner: document.querySelector('input[name=isHost]:checked').value === 'yes'
+            },
+            giftLog: {
+                amount: Number(amount.value),
+                actionType: document.querySelector('input[name=transactionType]:checked').value === 'income' ? '입금' : '출금',
+                payMethod: paymentMethod.value,
+                memo: memo.value
+            }
+        };
+
+        const res = await fetch(`/events/${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-AUTH-TOKEN': authToken
+            },
+            body: JSON.stringify(body)
+        });
+
+        const result = await res.json();
+        alert(result.result === 'success' ? '수정 성공' : '수정 실패');
+        location.href = '/detailevent.html';
+    });
+
+    function logout() {
+        sessionStorage.clear();
+        location.href = 'login.html';
+    }
+</script>
+</body>
+</html>

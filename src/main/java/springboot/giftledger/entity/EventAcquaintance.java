@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class EventAcquaintance {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventAcquaintanceId;

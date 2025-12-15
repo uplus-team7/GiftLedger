@@ -359,8 +359,54 @@
         }
     }
 
+    // 사이드바 뷰 변경
+    function changeView(view) {
+        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        // 페이지 이동
+        if (view === 'register') {
+            window.location.href = 'eventregister.html';
+        } else if (view === 'search') {
+            window.location.href = 'event.html';
+        }
+
+        // 이벤트 종류 선택 추가
+        async function fetchEventStatistics(ages, eventType) {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/api/statistics/event?ages=${ages}&eventType=${eventType}&actionType=GIVE`
+                );
+
+                const data = await response.json();
+
+                document.getElementById('statValue').textContent =
+                    data.averageAmount.toLocaleString() + '원';
+                document.getElementById('statLabel').textContent =
+                    `${ages}대 ${getEventTypeName(eventType)} 평균 축의금`;
+                document.getElementById('statDescription').textContent =
+                    `총 ${data.totalCount}건의 데이터 기반`;
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function getEventTypeName(eventType) {
+            const names = {
+                'WEDDING': '결혼식',
+                'FUNERAL': '장례식',
+                'BIRTHDAY': '생일',
+                'ETC': '기타'
+            };
+            return names[eventType] || eventType;
+        }
     // 로그아웃
     function logout() {
+    	
+    }
         localStorage.removeItem('accessToken');
         alert('로그아웃 되었습니다.');
         checkLoginStatus();  // 버튼 상태 업데이트

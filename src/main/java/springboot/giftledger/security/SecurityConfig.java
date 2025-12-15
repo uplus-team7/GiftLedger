@@ -45,7 +45,9 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/login.html",
                                 "/register.html",
+
                                 "/analysis.html",
+                                "/eventupdate.html",
                                 "/event.html",
                                 "/eventregister.html",
                                 "/detailevent.html",

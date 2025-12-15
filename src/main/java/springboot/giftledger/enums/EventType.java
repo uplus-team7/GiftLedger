@@ -15,4 +15,13 @@ public enum EventType {
     public String getDescription() {
         return description;
     }
+    
+    public static EventType fromDescription(String description) {
+        for (EventType type : EventType.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown description: " + description);
+    }
 }

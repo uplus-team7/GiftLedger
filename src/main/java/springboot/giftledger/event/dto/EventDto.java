@@ -1,12 +1,13 @@
 package springboot.giftledger.event.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import springboot.giftledger.enums.EventType;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -16,8 +17,10 @@ public class EventDto {
 
     private Long eventId;
     private String eventName;
-    private EventType eventType;
+    private String eventType;
     private LocalDateTime eventDate;
     private String location;
     private boolean isOwner;
+    
+    private Long totalAmount;
 }

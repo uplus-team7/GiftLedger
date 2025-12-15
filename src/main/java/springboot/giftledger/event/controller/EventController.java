@@ -1,14 +1,30 @@
 package springboot.giftledger.event.controller;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import springboot.giftledger.common.dto.ResultDto;
 import springboot.giftledger.event.dto.EventDetailsResultDto;
+import springboot.giftledger.event.dto.EventListResponse;
 import springboot.giftledger.event.dto.EventRequestDto;
 import springboot.giftledger.event.dto.EventResultDto;
+import springboot.giftledger.event.dto.EventUpdateRequest;
+import springboot.giftledger.event.dto.EventUpdateResponse;
 import springboot.giftledger.event.service.EventService;
 
 @RestController
@@ -16,8 +32,52 @@ import springboot.giftledger.event.service.EventService;
 @RequiredArgsConstructor
 @Slf4j
 public class EventController {
-
-    private final EventService eventService;
+	
+	private final EventService eventService;
+	
+	@PutMapping("/{eventId}")
+	public ResponseEntity<ResultDto<EventUpdateResponse>> updateEvent( @PathVariable("eventId") long eventId
+													 , @RequestBody EventUpdateRequest req 
+													 , @AuthenticationPrincipal String email ){
+		
+		log.info("[PUT /events/{eventId} - Controller] : Start");
+		log.info("[PUT /events/{eventId} - Controller] : args -> eventId : " + eventId + " / userId : " + email);
+		
+		ResultDto eventResultDto = eventService.updateEvent(eventId, req , email);
+		
+		
+        if ("success".equals(eventResultDto.getResult())) {
+            log.info("[PUT /events/{eventId} - Controller] : End");
+        	return ResponseEntity.ok(eventResultDto);
+        }
+        else {
+        	log.info("[PUT /events/{eventId} - Controller] : Error");
+            return ResponseEntity.status(401).body(eventResultDto);
+        }
+        
+	}
+	
+	
+	@GetMapping()
+	public ResponseEntity<ResultDto<Page<EventListResponse>>> eventList(@AuthenticationPrincipal String principal,
+																		  @PageableDefault(size = 5, sort = "eventDate", direction = Sort.Direction.DESC) Pageable pageable){
+		
+		log.info("[GET /events - Controller] : Start");
+		log.info("[PUT /events/{eventId} - Controller] : args -> userName : " + principal);
+		
+		ResultDto<Page<EventListResponse>> eventResultDto = eventService.eventList(principal, pageable);
+		
+        if ("success".equals(eventResultDto.getResult())) {
+            log.info("[PUT /events/{eventId} - Controller] : End");
+        	return ResponseEntity.ok(eventResultDto);
+        }
+        else {
+        	log.info("[PUT /events/{eventId} - Controller] : Error");
+            return ResponseEntity.status(401).body(eventResultDto);
+        }
+        
+	}
+	
 
     @PostMapping("")
     public ResponseEntity<EventResultDto> insertEvent(

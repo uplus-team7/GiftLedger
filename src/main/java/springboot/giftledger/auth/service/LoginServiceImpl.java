@@ -1,17 +1,18 @@
 package springboot.giftledger.auth.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import springboot.giftledger.auth.dto.LoginResultDto;
-import springboot.giftledger.repository.MemberRepository;
-import springboot.giftledger.security.JwtUtil;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import springboot.giftledger.auth.dto.LoginResultDto;
+import springboot.giftledger.security.JwtUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,8 @@ public class LoginServiceImpl implements LoginService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
+            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             log.info("success authentication email: {}, password: {}", email, password);
 

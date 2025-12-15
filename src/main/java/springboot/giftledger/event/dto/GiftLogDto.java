@@ -1,8 +1,10 @@
 package springboot.giftledger.event.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.PayMethod;
@@ -15,7 +17,7 @@ public class GiftLogDto {
 
     private Long giftLogId;
     private Long amount;
-    private ActionType actionType;
-    private PayMethod payMethod;
+    private String actionType;
+    private String payMethod;
     private String memo;
 }

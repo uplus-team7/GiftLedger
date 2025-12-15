@@ -14,4 +14,14 @@ public enum PayMethod {
     public String getDescription() {
         return description;
     }
+    
+    
+    public static PayMethod fromDescription(String description) {
+        for (PayMethod type : PayMethod.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown description: " + description);
+    }
 }

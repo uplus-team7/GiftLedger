@@ -15,4 +15,14 @@ public enum Relation {
     public String getDescription() {
         return description;
     }
+    
+    
+    public static Relation fromDescription(String description) {
+        for (Relation type : Relation.values()) {
+            if (type.description.equals(description)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("Unknown description: " + description);
+    }
 }

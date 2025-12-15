@@ -4,35 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>이벤트 조회 - 축의금 관리 시스템</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
+        .container { display: flex; height: 100vh; }
 
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* 왼쪽 사이드바 */
+        /* 사이드바 */
         .sidebar {
             width: 16.66%;
             background: rgba(255, 255, 255, 0.95);
             padding: 30px 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; gap: 15px;
         }
-
         .sidebar-btn {
             padding: 18px 20px;
             background: white;
@@ -45,41 +34,29 @@
             transition: all 0.3s ease;
             text-align: center;
         }
+        .sidebar-btn:hover { background: #667eea; color: white; transform: translateX(5px); }
+        .sidebar-btn.active { background: #667eea; color: white; }
 
-        .sidebar-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateX(5px);
+        /* 금액 뱃지 */
+        .amount-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 6px;
         }
+        .amount-badge.income { background: #e8f5e9; color: #2e7d32; }
+        .amount-badge.expense { background: #ffebee; color: #c62828; }
 
-        .sidebar-btn.active {
-            background: #667eea;
-            color: white;
-        }
+        /* 메인 */
+        .main-content { flex: 1; display: flex; flex-direction: column; }
 
-        /* 메인 컨텐츠 영역 */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 헤더 */
         .header {
             padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
         }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        }
+        .logo { font-size: 28px; font-weight: bold; color: white; }
 
         .logout-btn {
             padding: 10px 24px;
@@ -87,229 +64,81 @@
             background: transparent;
             color: white;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 14px; cursor: pointer;
         }
 
-        .logout-btn:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        /* 컨텐츠 영역 */
-        .content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-        }
-
+        /* 컨텐츠 */
+        .content { flex: 1; padding: 40px; overflow-y: auto; }
         .content-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            max-width: 1200px;
-            margin: 0 auto;
+            background: white; border-radius: 20px; padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 1200px; margin: 0 auto;
         }
 
-        .page-header {
-            margin-bottom: 30px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 20px;
-        }
+        .page-title { font-size: 28px; font-weight: 700; color: #333; margin-bottom: 6px; }
+        .page-description { font-size: 15px; color: #666; margin-bottom: 20px; }
 
-        .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .page-description {
-            font-size: 15px;
-            color: #666;
-        }
-
-        /* 이벤트 리스트 */
-        .event-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
+        /* 이벤트 카드 */
+        .event-list { display: flex; flex-direction: column; gap: 15px; }
         .event-card {
             background: #f9f9f9;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
             padding: 20px 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: grid;
-            grid-template-columns: 2fr 1.5fr 1.5fr 2fr 1.5fr 2fr;
+            grid-template-columns: 2fr 1fr 1fr 2fr 2fr 2fr;
             gap: 15px;
-            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
         }
+        .event-card:hover { border-color: #667eea; transform: translateY(-2px); }
 
-        .event-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .event-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .info-label {
-            font-size: 12px;
-            color: #999;
-            font-weight: 600;
-        }
-
-        .info-value {
-            font-size: 15px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .event-amount {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .amount-value {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .amount-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .income {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .expense {
-            background: #ffebee;
-            color: #c62828;
-        }
+        .info-label { font-size: 12px; color: #999; }
+        .info-value { font-size: 15px; font-weight: 600; color: #333; }
 
         /* 페이징 */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px solid #f0f0f0;
-        }
-
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 30px; }
         .page-btn {
-            padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 8px 14px; border: 2px solid #ccc;
+            background: white; border-radius: 8px; cursor: pointer;
         }
-
-        .page-btn:hover:not(:disabled) {
-            border-color: #667eea;
-            color: #667eea;
-        }
-
-        .page-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .page-info {
-            font-size: 14px;
-            color: #666;
-            margin: 0 10px;
-        }
-
-        /* 빈 상태 */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state-text {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .empty-state-subtext {
-            font-size: 14px;
-        }
+        .page-btn.active { background: #667eea; color: white; border-color: #667eea; }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     </style>
 </head>
+
 <body>
 <div class="container">
-    <!-- 왼쪽 사이드바 -->
+
     <div class="sidebar">
+        <button class="sidebar-btn" onclick="goToAnalytics()">분석 및 통계</button>
         <button class="sidebar-btn" onclick="goToRegister()">이벤트 등록</button>
         <button class="sidebar-btn active">이벤트 조회</button>
-        <button class="sidebar-btn" onclick="goToAnalytics()">분석 및 통계</button>
     </div>
 
-    <!-- 메인 컨텐츠 -->
     <div class="main-content">
-        <!-- 헤더 -->
+
         <div class="header">
             <div class="logo">축의금 관리 시스템</div>
             <button class="logout-btn" onclick="logout()">로그아웃</button>
         </div>
 
-        <!-- 컨텐츠 -->
         <div class="content">
             <div class="content-card">
-                <div class="page-header">
-                    <div class="page-title">내 경조사 일정</div>
-                    <div class="page-description">등록된 경조사 이벤트 목록을 확인하세요</div>
-                </div>
 
-                <div id="eventListContainer">
-                    <!-- 이벤트 리스트가 여기에 동적으로 생성됩니다 -->
-                </div>
+                <div class="page-title">내 경조사 일정</div>
+                <div class="page-description">등록된 경조사 이벤트 목록을 확인하세요</div>
 
-                <div class="pagination" id="paginationContainer">
-                    <!-- 페이징 버튼이 여기에 동적으로 생성됩니다 -->
-                </div>
+                <div id="eventListContainer"></div>
+                <div id="paginationContainer" class="pagination"></div>
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    const pageSize = 5;
     // 샘플 데이터 (실제로는 백엔드에서 가져옴)
     const mockEvents = [
         { id: 23, friendName: '김철수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-20', eventTime: '14:00', amount: 100000, transactionType: 'expense', memo: '대학 동기' },
@@ -324,118 +153,116 @@
         { id: 10, friendName: '박보검', relationship: '선후배', eventType: '장례', eventDate: '2024-11-10', eventTime: '09:00', amount: 50000, transactionType: 'expense', memo: '' },
     ];
 
-    let currentPage = 1;
-    const itemsPerPage = 5;
-
-    // 날짜순 정렬 (최신순)
-    mockEvents.sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate));
-
-    // 페이지 초기화
-    function initPage() {
-        renderEventList();
-        renderPagination();
+    /* 날짜 포맷 */
+    function formatDate(dateString) {
+        if (!dateString) return "-";
+        const d = new Date(dateString);
+        return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}
+                ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     }
 
-    // 이벤트 리스트 렌더링
-    function renderEventList() {
-        const container = document.getElementById('eventListContainer');
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const pageEvents = mockEvents.slice(startIndex, endIndex);
+    async function authFetch(url) {
+        const token = sessionStorage.getItem("authToken");
+        const res = await fetch(url, {
+            headers: { "X-AUTH-TOKEN": token }
+        });
+        if (res.status === 401) {
+            sessionStorage.clear();
+            location.href = "login.html";
+            return null;
+        }
+        return res;
+    }
 
-        if (pageEvents.length === 0) {
-            container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📅</div>
-                        <div class="empty-state-text">등록된 이벤트가 없습니다</div>
-                        <div class="empty-state-subtext">새로운 경조사 일정을 등록해보세요</div>
-                    </div>
-                `;
+    async function loadEvents(page) {
+        const res = await authFetch(`/events?page=${page}&size=${pageSize}`);
+        if (!res) return;
+
+        const json = await res.json();
+        if (json.result !== "success") return;
+
+        renderEventList(json.data.content);
+        renderPagination(json.data.totalPages, json.data.number);
+    }
+
+    /* 🔥 핵심 렌더링 */
+    function renderEventList(events) {
+        const container = document.getElementById("eventListContainer");
+
+        if (!events || events.length === 0) {
+            container.innerHTML = `<div>등록된 이벤트가 없습니다</div>`;
             return;
         }
 
         container.innerHTML = `
-                <div class="event-list">
-                    ${pageEvents.map(event => `
-                        <div class="event-card" onclick="goToDetail(${event.id})">
-                            <div class="event-info">
-                                <div class="info-label">지인 이름</div>
-                                <div class="info-value">${event.friendName}</div>
-                            </div>
-                            <div class="event-info">
-                                <div class="info-label">관계</div>
-                                <div class="info-value">${event.relationship}</div>
-                            </div>
-                            <div class="event-info">
-                                <div class="info-label">경조사 종류</div>
-                                <div class="info-value">${event.eventType}</div>
-                            </div>
-                            <div class="event-info">
-                                <div class="info-label">행사 날짜 및 시간</div>
-                                <div class="info-value">${formatDateTime(event.eventDate, event.eventTime)}</div>
-                            </div>
-                            <div class="event-info">
-                                <div class="info-label">금액</div>
-                                <div class="event-amount">
-                                    <span class="amount-value">${formatAmount(event.amount)}원</span>
-                                    <span class="amount-badge ${event.transactionType}">
-                                        ${event.transactionType === 'income' ? '입금' : '출금'}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="event-info">
-                                <div class="info-label">비고</div>
-                                <div class="info-value">${event.memo || '-'}</div>
+            <div class="event-list">
+                ${events.map(item => `
+                    <div class="event-card" onclick="goToDetail(${item.event.eventId})">
+
+                        <div>
+                            <div class="info-label">주최자</div>
+                            <div class="info-value">${item.ownerName || "-"}</div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">관계</div>
+                            <div class="info-value">${item.relation || "-"}</div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">종류</div>
+                            <div class="info-value">${item.event.eventType}</div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">일시</div>
+                            <div class="info-value">${formatDate(item.event.eventDate)}</div>
+                        </div>
+
+                        <div>
+                            <div class="info-label">금액</div>
+                            <div class="info-value">
+                                ${item.event.totalAmount.toLocaleString()}원
+                                <span class="amount-badge ${item.event.isOwner ? 'income' : 'expense'}">
+                                    ${item.event.isOwner ? '입금' : '출금'}
+                                </span>
                             </div>
                         </div>
-                    `).join('')}
-                </div>
-            `;
+
+                        <div>
+                            <div class="info-label">메모</div>
+                            <div class="info-value">${item.memo || "-"}</div>
+                        </div>
+
+                    </div>
+                `).join("")}
+            </div>
+        `;
     }
 
-    // 페이지네이션 렌더링
-    function renderPagination() {
-        const container = document.getElementById('paginationContainer');
-        const totalPages = Math.ceil(mockEvents.length / itemsPerPage);
+    function renderPagination(totalPages, current) {
+        const container = document.getElementById("paginationContainer");
+        if (totalPages <= 1) { container.innerHTML = ""; return; }
 
-        if (totalPages <= 1) {
-            container.innerHTML = '';
-            return;
+        let html = `<button class="page-btn" onclick="loadEvents(${current-1})" ${current===0?'disabled':''}>이전</button>`;
+        for (let i=0;i<totalPages;i++) {
+            html += `<button class="page-btn ${i===current?'active':''}" onclick="loadEvents(${i})">${i+1}</button>`;
         }
-
-        let paginationHTML = `
-                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                    이전
-                </button>
-            `;
-
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `
-                    <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                        ${i}
-                    </button>
-                `;
-        }
-
-        paginationHTML += `
-                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                    다음
-                </button>
-            `;
-
-        container.innerHTML = paginationHTML;
+        html += `<button class="page-btn" onclick="loadEvents(${current+1})" ${current===totalPages-1?'disabled':''}>다음</button>`;
+        container.innerHTML = html;
     }
 
-    // 페이지 변경
-    function changePage(page) {
-        const totalPages = Math.ceil(mockEvents.length / itemsPerPage);
-        if (page < 1 || page > totalPages) return;
+    function goToDetail(id){ location.href = `event-detail.html?id=${id}`; }
+    function goToRegister(){ location.href = "eventregister.html"; }
+    function goToAnalytics(){ location.href = "index.html"; }
+    function logout(){ sessionStorage.clear(); location.href="login.html"; }
 
+    loadEvents(0);
         currentPage = page;
         renderEventList();
         renderPagination();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    
 
     // 날짜 시간 포맷팅
     function formatDateTime(date, time) {
@@ -476,5 +303,6 @@
     // 페이지 로드 시 초기화
     initPage();
 </script>
+
 </body>
 </html>
