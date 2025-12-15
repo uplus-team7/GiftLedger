@@ -282,7 +282,7 @@
         <!-- 헤더 -->
         <div class="header">
             <div class="logo">축의금 관리 시스템</div>
-            <button class="logout-btn" onclick="logout()">로그아웃</button>
+            <button class="logout-btn" onclick="jwtLogout()">로그아웃</button>
         </div>
 
         <!-- 컨텐츠 -->
@@ -291,10 +291,6 @@
                 <div class="page-header">
                     <div class="page-title">이벤트 등록</div>
                     <div class="page-description">경조사 이벤트 정보를 등록하고 축의금을 관리하세요</div>
-                </div>
-
-                <div class="success-message" id="successMessage">
-                    ✓ 이벤트가 성공적으로 등록되었습니다!
                 </div>
 
                 <form id="eventForm">
@@ -314,12 +310,10 @@
                             </label>
                             <select class="form-select" id="relationship" required>
                                 <option value="">선택하세요</option>
-                                <option value="가족">가족</option>
-                                <option value="친척">친척</option>
-                                <option value="친구">친구</option>
-                                <option value="직장동료">직장동료</option>
-                                <option value="선후배">선후배</option>
-                                <option value="기타">기타</option>
+                                <option value="FAMILY">가족</option>
+                                <option value="FRIEND">친구</option>
+                                <option value="COWORKER">직장동료</option>
+                                <option value="ETC">기타</option>
                             </select>
                         </div>
 
@@ -342,12 +336,10 @@
                             </label>
                             <select class="form-select" id="eventType" required>
                                 <option value="">선택하세요</option>
-                                <option value="결혼">결혼</option>
-                                <option value="장례">장례</option>
-                                <option value="돌잔치">돌잔치</option>
-                                <option value="회갑">회갑</option>
-                                <option value="개업">개업</option>
-                                <option value="기타">기타</option>
+                                <option value="WEDDING">결혼</option>
+                                <option value="FUNERAL">장례</option>
+                                <option value="BIRTHDAY">돌잔치</option>
+                                <option value="ETC">기타</option>
                             </select>
                         </div>
 
@@ -409,11 +401,11 @@
                             </label>
                             <div class="radio-group">
                                 <div class="radio-option">
-                                    <input type="radio" id="income" name="transactionType" value="income" required>
+                                    <input type="radio" id="income" name="transactionType" value="TAKE" required>
                                     <label for="income">입금 (받음)</label>
                                 </div>
                                 <div class="radio-option">
-                                    <input type="radio" id="expense" name="transactionType" value="expense" checked>
+                                    <input type="radio" id="expense" name="transactionType" value="GIVE" checked>
                                     <label for="expense">출금 (보냄)</label>
                                 </div>
                             </div>
@@ -426,10 +418,10 @@
                             </label>
                             <select class="form-select" id="paymentMethod" required>
                                 <option value="">선택하세요</option>
-                                <option value="현금">현금</option>
-                                <option value="계좌이체">계좌이체</option>
-                                <option value="카드">카드</option>
-                                <option value="기타">기타</option>
+                                <option value="CASH">현금</option>
+                                <option value="BANK_TRANSFER">계좌이체</option>
+                                <option value="KAKAOPAY">카카오페이</option>
+                                <!-- <option value="기타">기타</option> -->
                             </select>
                         </div>
 
@@ -449,25 +441,15 @@
         </div>
     </div>
 </div>
-
+<script src="/assets/js/pageMove.js"></script>
+<script src="/assets/js/auth.js"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", getJwtToken());
+
     // 로그아웃
-    function logout() {
-        if (confirm('로그아웃 하시겠습니까?')) {
-            // 실제로는 세션 삭제 등의 처리 후 로그인 페이지로 이동
-            alert('로그아웃 되었습니다.');
-            window.location.href = 'login.html';
-        }
-    }
-
-    // 페이지 이동
-    function goToSearch() {
-        window.location.href = 'event-search.html';
-    }
-
-    function goToAnalytics() {
-        window.location.href = 'analytics.html';
-    }
+    // function logout() {
+    //     jwtLogout();
+    // }
 
     // 폼 초기화
     function resetForm() {
@@ -479,6 +461,8 @@
     // 폼 제출
     document.getElementById('eventForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        let url = "/events";
 
         // 폼 데이터 수집
         const formData = {
@@ -498,26 +482,62 @@
             memo: document.getElementById('memo').value
         };
 
-        console.log('등록할 이벤트 데이터:', formData);
+        let jsonParams = {
+            acquaintanceDto: {
+                name: formData.friendName,
+                relation: formData.relationship,
+                groupName: formData.detailGroup,
+                phone: formData.phone
+            },
+            eventDto: {
+                eventType: formData.eventType,
+                eventName: formData.eventName,
+                eventDate: `${formData.eventDate}T${formData.eventTime}:00`, 
+                location: formData.location,
+                isOwner: formData.isHost === 'true' 
+            },
+            giftLogDto: {
+                amount: Number(formData.amount),
+                actionType: formData.transactionType,
+                payMethod: formData.paymentMethod,
+                memo: formData.memo
+            }
+        };
 
-        // 백엔드 API 호출
-        // const response = await fetch('/api/events', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(formData)
-        // });
+        console.log('등록할 이벤트 데이터:', jsonParams);
 
-        // 성공 메시지 표시
-        const successMessage = document.getElementById('successMessage');
-        successMessage.classList.add('show');
+        let fetchOptions = {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json',
+                'X-Auth-Token': sessionStorage.getItem('authToken')
+            },
+            body: JSON.stringify(jsonParams)
+        }
+
+        try {
+
+            let response = await fetch(url, fetchOptions);
+
+            if (response.ok) {
+
+                let data = await response.json();
+                console.log(data);
+
+                if (data.result === "success") {
+                    alert('이벤트 등록 성공! 조회 화면으로 이동합니다.');
+                    window.location.href = '/event.html';
+                }
+
+            } else {
+                alert('이벤트가 등록되지 않았습니다.');
+            }
+        }catch (error){
+            console.error('이벤트 등록 요청 중 오류 발생:', error);
+        }
 
         // 폼 초기화
         document.getElementById('eventForm').reset();
-
-        // 3초 후 메시지 숨김
-        setTimeout(() => {
-            successMessage.classList.remove('show');
-        }, 3000);
 
         // 스크롤을 맨 위로
         window.scrollTo({ top: 0, behavior: 'smooth' });

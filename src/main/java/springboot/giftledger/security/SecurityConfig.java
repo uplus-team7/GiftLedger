@@ -46,6 +46,9 @@ public class SecurityConfig {
                                 "/login.html",
                                 "/register.html",
                                 "/analysis.html",
+                                "/event.html",
+                                "/eventregister.html",
+                                "/detailevent.html",
                                 "/auth/**",
                                 "/register",
                                 "/users",
@@ -62,6 +65,4 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class))
                 .build();
     }
-
-
 }

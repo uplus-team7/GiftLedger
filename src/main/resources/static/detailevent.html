@@ -207,6 +207,82 @@
             margin-bottom: 20px;
         }
 
+
+        /* 상세 내역 카드 스타일 (토글 기능 추가) */
+        .detail-card-item {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden; /* 내용 넘침 방지 */
+            transition: all 0.3s ease;
+        }
+        
+        .detail-card-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .detail-summary {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .detail-summary-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex: 1; /* 남은 공간 차지 */
+        }
+        
+        .detail-summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+        
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .toggle-icon {
+            width: 10px;
+            height: 10px;
+            justify-self: center;
+            border-right: 2px solid #777;
+            border-bottom: 2px solid #777;
+            transform: rotate(135deg);
+            transition: transform 0.2s ease;
+            opacity: 0.8;
+        }
+        
+        .detail-card-item.active .toggle-icon {
+            transform: rotate(45deg);
+        }
+        
+        .detail-content {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+            display: none; /* 기본적으로 숨김 */
+        }
+        
+        .detail-card-item.active .detail-content {
+            display: block; /* 활성화 시 표시 */
+        }
+
+
         .detail-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -237,29 +313,45 @@
 
         .memo-content {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
-            min-height: 80px;
+            padding: 15px; /* 패딩 조정 */
+            border-radius: 8px; /* 둥근 모서리 조정 */
+            border: 1px solid #eee; /* 테두리 색상 조정 */
+            min-height: 60px; /* 최소 높이 조정 */
             color: #555;
-            line-height: 1.6;
+            line-height: 1.5; /* 줄 간격 조정 */
         }
+        
+        /* Material Icons 불러오기 */
+        @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 
         /* 액션 버튼 */
         .action-buttons {
             display: flex;
             justify-content: flex-end;
+            margin-top: 20px;
             gap: 15px;
         }
 
-        .btn {
-            padding: 14px 32px;
+        .btn-sm {
+            padding: 8px 16px;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .btn-insert {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-insert:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
         }
 
         .btn-edit {
@@ -358,13 +450,48 @@
         .modal-btn-confirm:hover {
             background: #e03e4a;
         }
+
+        /* 폼 스타일 (등록 페이지 스타일 참고) */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            width: 100%; /* 모달 내에서 꽉 차게 */
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* 필수 항목 표시 (빨간 별) */
+        .required {
+            color: #ff4757;
+            margin-left: 3px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <!-- 왼쪽 사이드바 -->
     <div class="sidebar">
-        <button class="sidebar-btn" onclick="goToRegister()">이벤트 등록</button>
+        <button class="sidebar-btn" onclick="goToEventRegister()">이벤트 등록</button>
         <button class="sidebar-btn active" onclick="goToSearch()">이벤트 조회</button>
         <button class="sidebar-btn" onclick="goToAnalytics()">분석 및 통계</button>
     </div>
@@ -374,131 +501,288 @@
         <!-- 헤더 -->
         <div class="header">
             <div class="logo">축의금 관리 시스템</div>
-            <button class="logout-btn" onclick="logout()">로그아웃</button>
+            <button class="logout-btn" onclick="jwtLogout()">로그아웃</button>
         </div>
 
         <!-- 컨텐츠 -->
         <div class="content">
             <div class="content-card">
-                <button class="back-btn" onclick="goBack()">
+                <button class="back-btn" onclick="goToSearch()">
                     ← 목록으로 돌아가기
                 </button>
 
                 <!-- 주요 정보 -->
                 <div class="main-info">
-                    <div class="event-title" id="eventTitle">김철수♥이영희 결혼식</div>
+                    <div class="event-title" id="eventTitle"></div>
                     <div class="main-info-grid">
                         <div class="info-item">
                             <div class="info-label">경조사 종류</div>
-                            <div class="info-value" id="eventType">결혼</div>
+                            <div class="info-value" id="eventType"></div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">주최자 이름</div>
-                            <div class="info-value" id="hostName">김철수</div>
+                            <div class="info-value" id="hostName"></div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">입출금 구분</div>
                             <div class="info-value">
-                                <span class="transaction-badge expense-badge" id="transactionType">출금</span>
+                                <span class="transaction-badge expense-badge" id="transactionType"></span>
                             </div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">행사 날짜 및 시간</div>
-                            <div class="info-value" id="eventDateTime">2024.12.20 14:00</div>
+                            <div class="info-value" id="eventDateTime"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 상세 정보 -->
                 <div class="detail-info">
-                    <div class="section-title">상세 정보</div>
-                    <div class="detail-grid">
-                        <div class="detail-item">
-                            <div class="detail-label">지인 이름</div>
-                            <div class="detail-value" id="friendName">김철수</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">관계</div>
-                            <div class="detail-value" id="relationship">친구</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">금액</div>
-                            <div class="detail-value" id="amount">100,000원</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">지급 방법</div>
-                            <div class="detail-value" id="paymentMethod">현금</div>
-                        </div>
-                        <div class="detail-item memo-section">
-                            <div class="detail-label">메모</div>
-                            <div class="memo-content" id="memo">대학 동기, 학생회에서 같이 활동함</div>
-                        </div>
-                    </div>
+                    <div class="section-title">상세 내역</div>
+                    <div id="detailListContainer">  </div>
                 </div>
 
                 <!-- 액션 버튼 -->
                 <div class="action-buttons">
-                    <button class="btn btn-delete" onclick="showDeleteModal()">삭제</button>
-                    <button class="btn btn-edit" onclick="editEvent()">수정</button>
+                    <button class="btn-sm btn-insert" onclick="showInsertNewLogModal()">추가</button>
+<!--                    <button class="btn btn-edit" onclick="editEvent()">수정</button>-->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 삭제 확인 모달 -->
-<div class="modal" id="deleteModal">
-    <div class="modal-content">
-        <div class="modal-title">이벤트 삭제</div>
-        <div class="modal-text">
-            이 이벤트를 삭제하시겠습니까?<br>
-            삭제된 데이터는 복구할 수 없습니다.
+<!-- giftLog 추가 모달 -->
+<div class="modal" id="insertModal">
+    <div class="modal-content" style="text-align: left; max-width: 500px;">
+        <div class="modal-title" style="text-align: center; margin-bottom: 25px;">새 내역 추가</div>
+
+        <div class="modal-body">
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addName">이름<span class="required">*</span></label>
+                    <input type="text" id="addName" class="form-input" placeholder="이름 입력">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addPhone">연락처<span class="required">*</span></label>
+                    <input type="tel" id="addPhone" class="form-input" placeholder="010-0000-0000">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addRelation">관계<span class="required">*</span></label>
+                    <select id="addRelation" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="FRIEND">친구</option>
+                        <option value="FAMILY">가족</option>
+                        <option value="COWORKER">직장동료</option>
+                        <option value="ETC">기타</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addGroupName">상세 그룹</label>
+                    <input type="text" id="addGroupName" class="form-input" placeholder="예: 대학동기">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addAmount">금액<span class="required">*</span></label>
+                    <input type="number" id="addAmount" class="form-input" placeholder="0">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addActionType">입출금 구분<span class="required">*</span></label>
+                    <select id="addActionType" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="TAKE">입금 (받음)</option>
+                        <option value="GIVE">출금 (보냄)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addPayMethod">지불 방법<span class="required">*</span></label>
+                    <select id="addPayMethod" class="form-select">
+                        <option value="">선택하세요</option>
+                        <option value="CASH">현금</option>
+                        <option value="BANK_TRANSFER">계좌이체</option>
+                        <option value="KAKAOPAY">카카오페이</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="addMemo">비고</label>
+                    <input type="text" id="addMemo" class="form-input" placeholder="메모 입력">
+                </div>
+            </div>
+
         </div>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">취소</button>
-            <button class="modal-btn modal-btn-confirm" onclick="deleteEvent()">삭제</button>
+
+        <div class="modal-buttons" style="margin-top: 20px;">
+            <button class="modal-btn modal-btn-cancel" onclick="closeInsertNewLogModal()">취소</button>
+            <button class="modal-btn modal-btn-confirm" style="background: #667eea;" onclick="submitGuestLog()">추가하기</button>
         </div>
     </div>
 </div>
 
+<script src="/assets/js/pageMove.js"></script>
+<script src="/assets/js/auth.js"></script>
 <script>
-    // URL에서 이벤트 ID 가져오기
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventId = urlParams.get('id');
+    document.addEventListener("DOMContentLoaded", function() {
+        getJwtToken();
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
 
-    // 페이지 로드 시 데이터 표시
-    function loadEventData() {
-        const event = mockEventData[eventId];
-
-        if (!event) {
-            alert('이벤트를 찾을 수 없습니다.');
-            goBack();
+        if (!eventId) {
+            alert("잘못된 접근입니다.");
+            window.location.href = '/event.html';
             return;
         }
 
-        // 주요 정보 표시
-        document.getElementById('eventTitle').textContent = event.eventName || `${event.friendName} ${event.eventType}`;
-        document.getElementById('eventType').textContent = event.eventType;
-        document.getElementById('hostName').textContent = event.hostName;
-        document.getElementById('eventDateTime').textContent = formatDateTime(event.eventDate, event.eventTime);
+        loadEventDetail(eventId);
+    });
 
-        // 입출금 구분
-        const transactionBadge = document.getElementById('transactionType');
-        if (event.transactionType === 'income') {
-            transactionBadge.textContent = '입금';
-            transactionBadge.className = 'transaction-badge income-badge';
-        } else {
-            transactionBadge.textContent = '출금';
-            transactionBadge.className = 'transaction-badge expense-badge';
+    // 페이지 로드 시 데이터 표시
+    async function loadEventDetail(eventId) {
+
+        let url = `/events/${eventId}`;
+
+        let fetchOptions = {
+            method: 'GET',
+            headers: {
+                'X-AUTH-TOKEN': sessionStorage.getItem('authToken')
+            }
         }
 
-        // 상세 정보 표시
-        document.getElementById('friendName').textContent = event.friendName;
-        document.getElementById('relationship').textContent = event.relationship;
-        document.getElementById('amount').textContent = formatAmount(event.amount) + '원';
-        document.getElementById('paymentMethod').textContent = event.paymentMethod;
-        document.getElementById('memo').textContent = event.memo || '메모가 없습니다.';
+        try {
+            let response = await fetch(url, fetchOptions);
+
+            if (!response.ok) {
+                throw new Error("데이터 조회 실패");
+            }
+
+            let data = await response.json();
+            console.log(data);
+
+            if (data.result === "success") {
+                showEventDetails(data);
+            }
+
+        }catch (error){
+            console.error('이벤트 정보 요청 중 오류 발생:', error);
+        }
+    }
+
+    function showEventDetails(data) {
+        const event = data.eventDto;
+        const guestLogs = data.guestLogDtos || [];
+
+        // 이벤트 정보 표시
+        setText('eventTitle', event.eventName);
+        setText('eventType', event.eventType);
+
+        if (event.eventDate) {
+            const formattedDate = event.eventDate.replace('T', ' ').substring(0, 16).replace(/-/g, '.');
+            setText('eventDateTime', formattedDate);
+        }
+
+        const firstLog = guestLogs.length > 0 ? guestLogs[0] : null;
+        const hostName = event.isOwner ? "나 (본인)" : (firstLog ? firstLog.acquaintanceDto.name : "지인");
+        setText('hostName', hostName);
+
+        const badge = document.getElementById('transactionType');
+        if (badge) {
+            if (firstLog && firstLog.giftLogDto.actionType === 'GIVE') {
+                badge.innerText = '출금';
+                badge.className = 'transaction-badge expense-badge';
+            } else {
+                badge.innerText = '입금';
+                badge.className = 'transaction-badge income-badge';
+            }
+        }
+
+
+        // 상세 내역 리스트 표시
+        const container = document.getElementById('detailListContainer');
+        container.innerHTML = '';
+
+        // 내역이 없으면
+        if (guestLogs.length === 0) {
+            container.innerHTML = '<div class="no-data" style="text-align:center; padding:30px; color:#888;">등록된 상세 내역이 없습니다.</div>';
+            return;
+        }
+
+        // 리스트 반복 시작
+        guestLogs.forEach((item, idx) => {
+            console.log('Rendering item:', item);
+            const person = item.acquaintanceDto;
+            const log = item.giftLogDto;
+
+            const cardId = `detail-card-${idx}`;
+            console.log('cardId:', cardId);
+            
+            // 뱃지 스타일 결정
+            const badgeClass = log.actionType === 'GIVE' ? 'expense-badge' : 'income-badge';
+            const badgeText = log.actionType === 'GIVE' ? '출금' : '입금';
+
+            const itemHtml = `
+                <div class="detail-card-item" id="${cardId}">
+                    <div class="detail-summary" onclick="toggleDetail('${cardId}')">
+                        <div class="detail-summary-info">
+                            <div class="detail-summary-item">
+                                <span class="summary-label">이름</span>
+                                <span class="summary-value">${person.name}</span>
+                            </div>
+                            <div class="detail-summary-item">
+                                <span class="summary-label">관계</span>
+                                <span class="summary-value">${person.relation}</span>
+                            </div>
+                            <div class="detail-summary-item">
+                                <span class="summary-label">금액</span>
+                                <span class="summary-value">
+                                    ${log.amount.toLocaleString()}원
+                                    <span class="transaction-badge ${badgeClass}" style="font-size:12px; margin-left:5px; padding:2px 8px;">${badgeText}</span>
+                                </span>
+                            </div>
+                        </div>
+                        <span class="toggle-icon"></span>
+                    </div>
+
+                    <div class="detail-content">
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">상세 그룹</div>
+                            <div class="detail-value">${person.groupName || '-'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">연락처</div>
+                            <div class="detail-value">${person.phone}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">지급 방법</div>
+                            <div class="detail-value">${log.payMethod || '-'}</div>
+                        </div>
+                        
+                        <div class="detail-item memo-section" style="grid-column: span 2;">
+                            <div class="detail-label">비고</div>
+                            <div class="memo-content">${log.memo || '-'}</div>
+                        </div>
+                    </div>
+                        
+                    <div class="action-buttons">
+                        <button 
+                            onclick="deleteGuestLog(${log.giftLogId})"
+                            class="btn-sm btn-delete">
+                            삭제
+                        </button>
+                        <button class="btn-sm btn-edit" onclick="editEvent(${log.giftLogId})">수정</button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', itemHtml);
+        });
     }
 
     // 날짜 시간 포맷팅
@@ -510,64 +794,131 @@
         return time ? `${year}.${month}.${day} ${time}` : `${year}.${month}.${day}`;
     }
 
-    // 금액 포맷팅
-    function formatAmount(amount) {
-        return amount.toLocaleString();
+    function toggleDetail(cardId) {
+        const card = document.getElementById(cardId);
+        card.classList.toggle('active');
     }
 
-    // 삭제 모달 표시
-    function showDeleteModal() {
-        document.getElementById('deleteModal').classList.add('show');
+    // 추가 모달 표시
+    function showInsertNewLogModal() {
+        document.getElementById('addName').value = '';
+        document.getElementById('addPhone').value = '';
+        document.getElementById('addGroupName').value = '';
+        document.getElementById('addAmount').value = '';
+        document.getElementById('addMemo').value = '';
+        document.getElementById('addRelation').value = '';
+        document.getElementById('addActionType').value = '';
+        document.getElementById('addPayMethod').value = '';
+
+        document.getElementById('insertModal').classList.add('show');
     }
 
-    // 삭제 모달 닫기
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').classList.remove('show');
+    // 추가 모달 닫기
+    function closeInsertNewLogModal() {
+        document.getElementById('insertModal').classList.remove('show');
     }
 
-    // 이벤트 삭제
-    function deleteEvent() {
-        // 실제로는 백엔드 API 호출
-        // await fetch(`/api/events/${eventId}`, { method: 'DELETE' });
+    // 이벤트 내역 추가
+    async function submitGuestLog() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
 
-        console.log('이벤트 삭제:', eventId);
-        alert('이벤트가 삭제되었습니다.');
-        window.location.href = 'event-search.html';
-    }
+        const formData = {
+            name: document.getElementById('addName').value,
+            phone: document.getElementById('addPhone').value,
+            relation: document.getElementById('addRelation').value,
+            groupName: document.getElementById('addGroupName').value,
+            actionType: document.getElementById('addActionType').value,
+            amount: document.getElementById('addAmount').value,
+            payMethod: document.getElementById('addPayMethod').value,
+            memo: document.getElementById('addMemo').value
+        };
 
-    // 이벤트 수정
-    function editEvent() {
-        // 수정 페이지로 이동 (등록 페이지를 수정 모드로 재사용 가능)
-        window.location.href = `event-edit.html?id=${eventId}`;
-    }
+        let jsonParams = {
+            acquaintanceDto: {
+                name: formData.name,
+                relation: formData.relation,
+                groupName: formData.groupName,
+                phone: formData.phone
+            },
+            giftLogDto: {
+                actionType: formData.actionType,
+                amount: Number(formData.amount),
+                payMethod: formData.payMethod,
+                memo: formData.memo
+            }
+        };
 
-    // 목록으로 돌아가기
-    function goBack() {
-        window.location.href = 'event-search.html';
-    }
+        let url = `/events/${eventId}`;
+        let token = sessionStorage.getItem('authToken');
 
-    // 페이지 이동
-    function goToRegister() {
-        window.location.href = 'event-register.html';
-    }
+        try {
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-AUTH-TOKEN': token
+                },
+                body: JSON.stringify(jsonParams)
+            });
 
-    function goToSearch() {
-        window.location.href = 'event-search.html';
-    }
-
-    function goToAnalytics() {
-        window.location.href = 'analytics.html';
-    }
-
-    function logout() {
-        if (confirm('로그아웃 하시겠습니까?')) {
-            alert('로그아웃 되었습니다.');
-            window.location.href = 'login.html';
+            if (response.ok) {
+                alert("성공적으로 추가되었습니다.");
+                closeInsertNewLogModal();
+                window.location.reload();
+            } else {
+                alert("추가에 실패했습니다. 입력 값을 확인해주세요.");
+            }
+        } catch (error) {
+            console.error("서버 통신 오류:", error);
+            alert("서버 오류가 발생했습니다.");
         }
     }
 
-    // 페이지 로드 시 데이터 로드
-    loadEventData();
+    // 이벤트 삭제
+    async function deleteGuestLog(targetGiftId) {
+        if (!confirm("정말 이 내역을 삭제하시겠습니까?")) return;
+
+        let url = `/events/${targetGiftId}`;
+        let token = sessionStorage.getItem('authToken');
+        
+        try {
+            let response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-AUTH-TOKEN': token
+                }
+            });
+
+            if (response.ok) {
+                alert('내역이 삭제되었습니다.');
+                window.location.href = '/event.html'; 
+            } else {
+                alert('삭제에 실패했습니다.');
+            }
+
+        } catch (error) {
+            console.error('이벤트 내역 삭제 중 오류 발생:', error);
+        }
+    }
+
+    // 이벤트 수정
+    function editEvent(targetGiftId) {
+        // 수정 페이지로 이동 (등록 페이지를 수정 모드로 재사용 가능)
+        window.location.href = `event-edit.html?id=${targetGiftId}`;
+    }
+
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+            // 태그 종류에 따라 값 넣는 방식 구분
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.value = text || '';
+            } else {
+                el.innerText = text || '-';
+            }
+        }
+    }
 </script>
 </body>
 </html>

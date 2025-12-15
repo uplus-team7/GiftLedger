@@ -312,9 +312,9 @@
 <script>
     // 샘플 데이터 (실제로는 백엔드에서 가져옴)
     const mockEvents = [
-        { id: 1, friendName: '김철수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-20', eventTime: '14:00', amount: 100000, transactionType: 'expense', memo: '대학 동기' },
-        { id: 2, friendName: '이영희', relationship: '직장동료', eventType: '장례', eventDate: '2024-12-15', eventTime: '10:00', amount: 50000, transactionType: 'expense', memo: '' },
-        { id: 3, friendName: '박민수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-10', eventTime: '13:00', amount: 150000, transactionType: 'income', memo: '내 결혼식에 참석' },
+        { id: 23, friendName: '김철수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-20', eventTime: '14:00', amount: 100000, transactionType: 'expense', memo: '대학 동기' },
+        { id: 33, friendName: '이영희', relationship: '직장동료', eventType: '장례', eventDate: '2024-12-15', eventTime: '10:00', amount: 50000, transactionType: 'expense', memo: '' },
+        { id: 29, friendName: '박민수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-10', eventTime: '13:00', amount: 150000, transactionType: 'income', memo: '내 결혼식에 참석' },
         { id: 4, friendName: '최지은', relationship: '가족', eventType: '돌잔치', eventDate: '2024-12-05', eventTime: '12:00', amount: 200000, transactionType: 'expense', memo: '조카' },
         { id: 5, friendName: '정우성', relationship: '선후배', eventType: '개업', eventDate: '2024-12-01', eventTime: '11:00', amount: 50000, transactionType: 'expense', memo: '대학 선배' },
         { id: 6, friendName: '강동원', relationship: '친구', eventType: '결혼', eventDate: '2024-11-28', eventTime: '15:00', amount: 100000, transactionType: 'expense', memo: '' },
@@ -454,12 +454,12 @@
     // 상세 페이지로 이동
     function goToDetail(eventId) {
         // 실제로는 이벤트 ID와 함께 상세 페이지로 이동
-        window.location.href = `event-detail.html?id=${eventId}`;
+        window.location.href = `detailevent.html?id=${eventId}`;
     }
 
     // 페이지 이동
     function goToRegister() {
-        window.location.href = 'event-register.html';
+        window.location.href = 'eventregister.html';
     }
 
     function goToAnalytics() {

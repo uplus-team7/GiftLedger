@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import springboot.giftledger.entity.EventAcquaintance;
 import springboot.giftledger.entity.GiftLog;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.EventType;
@@ -24,6 +25,7 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
             @Param("ages") String ages,
             @Param("eventType") EventType eventType,
             @Param("actionType") ActionType actionType);
+
 
     // 연령대, 이벤트 타입, 액션 타입별 총 건수
     @Query("SELECT COUNT(g) " +
@@ -98,6 +100,10 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
             "GROUP BY DAYOFWEEK(e.eventDate)")
     List<Object[]> getWeekdayPattern(@Param("memberId") Long memberId,
                                      @Param("year") int year);
+
+    void deleteByGiftId(Long giftId);
+
+    List<GiftLog> findAllByEventAcquaintance(EventAcquaintance eventAcquaintance);
 
     // 특정 연도의 이벤트 타입별 분포 (결혼식, 장례식, 생일, 기타)
     @Query("SELECT e.eventType, COUNT(g), SUM(g.amount) " +

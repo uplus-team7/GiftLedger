@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -23,4 +26,8 @@ public class EventAcquaintance {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "acquaintance_id", nullable = false)
     private Acquaintance acquaintance;
+
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "eventAcquaintance", fetch = FetchType.LAZY)
+    private List<GiftLog> giftLogs;
 }

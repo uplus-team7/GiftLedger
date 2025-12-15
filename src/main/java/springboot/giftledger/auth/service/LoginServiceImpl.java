@@ -57,7 +57,7 @@ public class LoginServiceImpl implements LoginService {
             log.error("에러 상세 정보",e);
             loginResultDto.setResult("fail");
 
-            return loginResultDto.builder()
+            return LoginResultDto.builder()
                     .result("fail")
                     .token(null)
                     .build();
