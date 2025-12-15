@@ -8,12 +8,12 @@ spring:
     password: 1234
 
   jpa:
+    show-sql: true
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-        ddl-auto: update
-        show-sql: true
+      ddl-auto: update
 
 jwt:
   secret: ThisIsAVeryLongAndSecureSecretKeyForJWTTokenGenerationThatMeetsTheMinimumRequirementOf256BitsOrMoreForHS256AlgorithmToWorkProperlyWithoutAnyIssues
