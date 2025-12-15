@@ -1,40 +1,23 @@
 package springboot.giftledger.event.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import springboot.giftledger.acquaintance.dto.AcquaintanceDto;
-import springboot.giftledger.entity.Event;
 import springboot.giftledger.enums.ActionType;
 import springboot.giftledger.enums.PayMethod;
-import springboot.giftledger.enums.Relation;
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class GiftLogDto {
-	
-	private Long giftId;
-	
-	
-	private long amount;
-	
-	private String actionType;
-	
-	private String payMethod;
-	
-	private String memo;
 
-//	private Long eventAcquaintId;
+    private Long giftLogId;
+    private Long amount;
+    private ActionType actionType;
+    private PayMethod payMethod;
+    private String memo;
 }

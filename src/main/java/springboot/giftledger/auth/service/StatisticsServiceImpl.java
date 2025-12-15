@@ -16,19 +16,38 @@ public class StatisticsServiceImpl implements StatisticsService{
 
     @Override
     public StatisticsDto getEventStatistics(String ages, String eventType, String actionType) {
-        EventType eventTypeEnum = EventType.valueOf(eventType);
-        ActionType actionTypeEnum = ActionType.valueOf(actionType);
+        try {
+            EventType eventTypeEnum = EventType.valueOf(eventType);
+            ActionType actionTypeEnum = ActionType.valueOf(actionType);
 
-        Double avgAmount = giftLogRepository.findAverageAmountByAgesAndEventTypeAndActionType(ages, eventTypeEnum, actionTypeEnum);
+            // 평균 금액 조회
+            Double avgAmount = giftLogRepository.findAverageAmountByAgesAndEventTypeAndActionType(
+                    ages, eventTypeEnum, actionTypeEnum
+            );
 
-        Long count = giftLogRepository.countByAgesAndEventTypeAndActionType(ages, eventTypeEnum, actionTypeEnum);
+            // 총 건수 조회
+            Long count = giftLogRepository.countByAgesAndEventTypeAndActionType(
+                    ages, eventTypeEnum, actionTypeEnum
+            );
 
-        return StatisticsDto.builder()
-                .ages(ages)
-                .eventType(eventType)
-                .averageAmount(avgAmount != null ? avgAmount.longValue() : 0L)
-                .totalCount(count)
-                .actionType(actionType)
-                .build();
+
+            return StatisticsDto.builder()
+                    .ages(ages)
+                    .eventType(eventType)
+                    .averageAmount(avgAmount != null ? avgAmount.longValue() : 0L)
+                    .totalCount(count != null ? count : 0L)
+                    .actionType(actionType)
+                    .build();
+
+        } catch (IllegalArgumentException e) {
+
+            return StatisticsDto.builder()
+                    .ages(ages)
+                    .eventType(eventType)
+                    .averageAmount(0L)
+                    .totalCount(0L)
+                    .actionType(actionType)
+                    .build();
+        }
     }
 }

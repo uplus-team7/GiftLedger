@@ -152,6 +152,7 @@
 </div>
 
 <script>
+
     // 이메일 형식 검증
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -231,6 +232,7 @@
 
                 if (data.result === "success") {
                     sessionStorage.setItem('authToken', data.token);
+                    // localStorage.setItem('accessToken', data.token);
                     alert('로그인 성공! 메인 화면으로 돌아갑니다.');
                     window.location.href = '/index.html';
                 }

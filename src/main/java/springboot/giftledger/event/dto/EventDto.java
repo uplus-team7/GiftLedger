@@ -4,31 +4,21 @@ import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import springboot.giftledger.acquaintance.dto.AcquaintanceDto;
 import springboot.giftledger.enums.EventType;
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class EventDto {
-	
+
     private Long eventId;
-    private String eventType;
     private String eventName;
+    private EventType eventType;
     private LocalDateTime eventDate;
     private String location;
-    private Boolean isOwner;
-	
-    
-    private Long totalAmount;
-    
-    
-    public void totalAmount(Long totalAmount) {
-    	this.totalAmount = totalAmount;
-    }
-	
-
+    private boolean isOwner;
 }
