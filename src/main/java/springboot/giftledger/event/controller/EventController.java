@@ -35,6 +35,21 @@ public class EventController {
 	
 	private final EventService eventService;
 	
+	@GetMapping("details/{giftId}")
+	public ResponseEntity<ResultDto<EventUpdateResponse>> detcailsGiftLog(@AuthenticationPrincipal String email,
+			 														@PathVariable("giftId") Long giftId){
+		
+		log.info("[GET /details/{giftId} - Controller] : Start");
+		log.info("[GET /details/{giftId} - Controller] : args -> userName : " + email + ", giftId :" + giftId);
+		
+		ResultDto<EventUpdateResponse> eventResultDto = eventService.detailsGiftLog(email , giftId);
+		
+		log.info("[GET /details/{giftId} - Controller] : End");
+		return ResponseEntity.ok(eventResultDto);
+        
+	}
+	
+	
 	@PutMapping("/{eventId}")
 	public ResponseEntity<ResultDto<EventUpdateResponse>> updateEvent( @PathVariable("eventId") long eventId
 													 , @RequestBody EventUpdateRequest req 
@@ -43,17 +58,11 @@ public class EventController {
 		log.info("[PUT /events/{eventId} - Controller] : Start");
 		log.info("[PUT /events/{eventId} - Controller] : args -> eventId : " + eventId + " / userId : " + email);
 		
-		ResultDto eventResultDto = eventService.updateEvent(eventId, req , email);
+		ResultDto<EventUpdateResponse> eventResultDto = eventService.updateEvent(eventId, req , email);
 		
 		
-        if ("success".equals(eventResultDto.getResult())) {
-            log.info("[PUT /events/{eventId} - Controller] : End");
-        	return ResponseEntity.ok(eventResultDto);
-        }
-        else {
-        	log.info("[PUT /events/{eventId} - Controller] : Error");
-            return ResponseEntity.status(401).body(eventResultDto);
-        }
+		log.info("[PUT /events/{eventId} - Controller] : End");
+		return ResponseEntity.ok(eventResultDto);
         
 	}
 	
@@ -66,15 +75,8 @@ public class EventController {
 		log.info("[PUT /events/{eventId} - Controller] : args -> userName : " + principal);
 		
 		ResultDto<Page<EventListResponse>> eventResultDto = eventService.eventList(principal, pageable);
-		
-        if ("success".equals(eventResultDto.getResult())) {
-            log.info("[PUT /events/{eventId} - Controller] : End");
-        	return ResponseEntity.ok(eventResultDto);
-        }
-        else {
-        	log.info("[PUT /events/{eventId} - Controller] : Error");
-            return ResponseEntity.status(401).body(eventResultDto);
-        }
+		log.info("[PUT /events/{eventId} - Controller] : End");
+		return ResponseEntity.ok(eventResultDto);
         
 	}
 	
@@ -107,7 +109,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDetailsResultDto> detailsEvent(
             @AuthenticationPrincipal String email,
-            @PathVariable Long eventId) {
+            @PathVariable("eventId") Long eventId) {
 
         log.info("[EventController - detailsEvent] 사용자 정보 email: {}", email);
         log.info("[EventController - detailsEvent] eventId: {}", eventId);
@@ -133,7 +135,7 @@ public class EventController {
     @DeleteMapping("/{giftId}")
     public ResponseEntity<EventResultDto> deleteEvent(
             @AuthenticationPrincipal String email,
-            @PathVariable Long giftId) {
+            @PathVariable("giftId") Long giftId) {
 
         log.info("[EventController - deleteEvent] 사용자 정보 email: {}", email);
         log.info("[EventController - deleteEvent] giftId: {}", giftId);
@@ -159,7 +161,7 @@ public class EventController {
     @PostMapping("/{eventId}")
     public ResponseEntity<EventDetailsResultDto> insertEventOnDetails(
             @AuthenticationPrincipal String email,
-            @PathVariable Long eventId,
+            @PathVariable("eventId") Long eventId,
             @RequestBody EventRequestDto eventRequestDto
     ){
         log.info("[EventController - insertEventOnDetails] 사용자 정보 email: {}", email);
