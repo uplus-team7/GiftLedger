@@ -65,6 +65,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                                 
                         ).permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())

@@ -23,5 +23,4 @@ public class SwaggerConfig {
                 .description("축의금 관리 시스템")
                 .version("v0.1");
     }
-
 }

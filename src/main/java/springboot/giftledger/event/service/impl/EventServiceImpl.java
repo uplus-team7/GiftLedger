@@ -234,7 +234,6 @@ public class EventServiceImpl implements EventService{
                     .phone(acquaintanceDto.getPhone())
                     .build();
 
-            log.info("[EventServiceImpl - insertEvent] 새로운 지인 저장 시도 acquaintance: {}", acquaintance);
             acquaintanceRepository.save(acquaintance);
             log.info("[EventServiceImpl - insertEvent] 새로운 지인 저장 완료");
         }
@@ -251,7 +250,6 @@ public class EventServiceImpl implements EventService{
                 .isOwner(eventDto.isOwner())
                 .build();
 
-        log.info("[EventServiceImpl - insertEvent] event db에 저장 시도: {}", event);
         eventRepository.save(event);
         eventDto.setEventId(event.getEventId());
         log.info("[EventServiceImpl - insertEvent] event 저장 완료");
@@ -274,7 +272,6 @@ public class EventServiceImpl implements EventService{
                 .memo(giftLogDto.getMemo())
                 .build();
 
-        log.info("[EventServiceImpl - insertEvent] giftLog db에 저장 시도: {}", giftLog);
         giftLogRepository.save(giftLog);
         giftLogDto.setGiftLogId(giftLog.getGiftId());
         log.info("[EventServiceImpl - insertEvent] giftLog 저장 완료");
@@ -382,7 +379,6 @@ public class EventServiceImpl implements EventService{
                     .phone(acquaintanceDto.getPhone())
                     .build();
 
-            log.info("새로운 지인 저장 시도 acquaintance: {}", acquaintance);
             acquaintanceRepository.save(acquaintance);
             log.info("새로운 지인 저장 완료");
         }
@@ -393,6 +389,7 @@ public class EventServiceImpl implements EventService{
                 .build();
 
         eventAcquaintanceRepository.save(eventAcquaintance);
+        log.info("[EventServiceImpl - insertEventOnDetails] event 저장 완료");
 
         GiftLog giftLog = GiftLog.builder()
                 .eventAcquaintance(eventAcquaintance)
@@ -403,6 +400,7 @@ public class EventServiceImpl implements EventService{
                 .build();
 
         giftLogRepository.save(giftLog);
+        log.info("[EventServiceImpl - insertEventOnDetails] giftLog 저장 완료");
 
         return EventDetailsResultDto.builder()
                 .result("success")

@@ -121,10 +121,6 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
     List<Object[]> getWeekdayPattern(@Param("memberId") Long memberId,
                                      @Param("year") int year);
 
-    void deleteByGiftId(Long giftId);
-
-    List<GiftLog> findAllByEventAcquaintance(EventAcquaintance eventAcquaintance);
-
     // 특정 연도의 이벤트 타입별 분포 (결혼식, 장례식, 생일, 기타)
     @Query("SELECT e.eventType, COUNT(g), SUM(g.amount) " +
             "FROM GiftLog g " +
@@ -190,4 +186,8 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
             "HAVING SUM(CASE WHEN g.actionType = 'GIVE' THEN g.amount ELSE 0 END) > " +
             "SUM(CASE WHEN g.actionType = 'TAKE' THEN g.amount ELSE 0 END)")
     List<Object[]> getUnrecoveredRelations(@Param("memberId") Long memberId);
+
+    void deleteByGiftId(Long giftId);
+
+    List<GiftLog> findAllByEventAcquaintance(EventAcquaintance eventAcquaintance);
 }
