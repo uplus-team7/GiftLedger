@@ -523,7 +523,7 @@
         </div>
     </div>
 </div>
-
+<script src="/assets/js/auth.js"></script>
 <script>
     const API_BASE_URL = 'http://localhost:8080';
     let currentTab = 'dashboard';
@@ -557,7 +557,10 @@
     }
 
     function checkLoginStatus() {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
+        console.log('sending token', token);
+
+
         const authButtons = document.getElementById('authButtons');
         if (!token) {
             alert('로그인이 필요한 서비스입니다.');
@@ -565,13 +568,6 @@
             return;
         }
         authButtons.innerHTML = '<button class="auth-btn" onclick="jwtLogout()">로그아웃</button>';
-    }
-
-    function logout() {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('loginTime');
-        alert('로그아웃 되었습니다.');
-        window.location.href = 'index.html';
     }
 
     function changeTab(tabName) {
@@ -601,7 +597,7 @@
     }
 
     async function loadDashboardData() {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
         try {
             const dashboardResponse = await fetch(`${API_BASE_URL}/analysis/dashboard`, {
                 headers: { 'X-AUTH-TOKEN': token }
@@ -673,7 +669,7 @@
     }
 
     async function loadPatternData() {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
         try {
             const response = await fetch(`${API_BASE_URL}/analysis/pattern?year=${selectedYear}`, {
                 headers: { 'X-AUTH-TOKEN': token }
@@ -823,7 +819,7 @@
     }
 
     async function loadRelationData() {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
         try {
             const response = await fetch(`${API_BASE_URL}/analysis/relation`, {
                 headers: { 'X-AUTH-TOKEN': token }
@@ -886,7 +882,7 @@
     }
 
     async function loadRecoveryData() {
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
         try {
             const response = await fetch(`${API_BASE_URL}/analysis/recovery`, {
                 headers: { 'X-AUTH-TOKEN': token }

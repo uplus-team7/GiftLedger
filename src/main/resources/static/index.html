@@ -328,6 +328,7 @@
     </div>
 </div>
 
+<script src="/assets/js/auth.js"></script>
 <script>
     const API_BASE_URL = 'http://localhost:8080';
     let currentAge = '20';
@@ -341,15 +342,11 @@
 
     // 로그인 상태 확인
     function checkLoginStatus() {
-        console.log('index.html 토큰:', localStorage.getItem('accessToken'));
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('authToken');
         const authButtons = document.getElementById('authButtons');
 
         if (token) {
-            // 로그인 상태 → 로그아웃 버튼만 보여주기
-            authButtons.innerHTML = `
-                <button class="auth-btn" onclick="logout()">로그아웃</button>
-            `;
+            authButtons.innerHTML = '<button class="auth-btn" onclick="jwtLogout()">로그아웃</button>';
         } else {
             // 비로그인 상태 → 로그인 & 회원가입 버튼
             authButtons.innerHTML = `
@@ -406,7 +403,7 @@
     }
     // 로그아웃
     function logout() {
-    	
+
         localStorage.removeItem('accessToken');
         alert('로그아웃 되었습니다.');
         checkLoginStatus();  // 버튼 상태 업데이트
@@ -414,12 +411,12 @@
 
     // 로그인 페이지로 이동
     function goToLogin() {
-        window.location.href = 'login.html';
+        window.location.href = '/login.html';
     }
 
     // 회원가입 페이지로 이동
     function goToSignup() {
-        window.location.href = 'register.html';
+        window.location.href = '/register.html';
     }
 
     // 연령대 변경
