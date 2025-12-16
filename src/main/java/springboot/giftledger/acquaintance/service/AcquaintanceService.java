@@ -8,6 +8,6 @@ import springboot.giftledger.common.dto.ResultDto;
 
 public interface AcquaintanceService {
 	
-	ResultDto<Page<AcquaintanceDto>> acquaintanceList (String email, Pageable pageable);
+	ResultDto<Page<AcquaintanceDto>> acquaintanceList (String email, String keyword, Pageable pageable);
 
 }

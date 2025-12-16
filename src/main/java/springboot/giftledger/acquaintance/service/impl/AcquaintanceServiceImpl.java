@@ -19,10 +19,11 @@ public class AcquaintanceServiceImpl implements AcquaintanceService {
 	private final AcquaintanceRepository acquaintanceRepository;
 
 	@Override
-	public ResultDto<Page<AcquaintanceDto>> acquaintanceList(String email, Pageable pageable) {
+	public ResultDto<Page<AcquaintanceDto>> acquaintanceList(String email, String keyword ,Pageable pageable) {
 		
-		Page<Acquaintance> acqPage = 
-				acquaintanceRepository.findByMemberEmail(email, pageable);
+		Page<Acquaintance> acqPage = (keyword == null) ? 
+				acquaintanceRepository.findByMemberEmail(email, pageable) : 
+				acquaintanceRepository.findByMemberEmailAndNameContaining(email, keyword, pageable);
 		
 		Page<AcquaintanceDto> mapped = 
 				acqPage.map(acq -> {
@@ -30,7 +31,7 @@ public class AcquaintanceServiceImpl implements AcquaintanceService {
 				});
 		
 		
-		return ResultDto.of("success", mapped);
+		return (mapped.isEmpty()) ? ResultDto.of("fail", mapped)  : ResultDto.of("success", mapped);
 	}
 	
 	private AcquaintanceDto toAcquaintanceDto(Acquaintance acq) {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import springboot.giftledger.common.dto.ResultDto;
@@ -35,46 +36,48 @@ public class EventController {
 	
 	private final EventService eventService;
 	
+	@Operation(summary = "축의금 내역 상세 조회", 
+			   description = """
+			   				사용자의 특정 축의금 내역에 대한 상세 정보를 조회
+			   				- 본인 소유의 축의금 내역이 아니라면 401을 , 잘못된 요청이면 400을 반환합니다.
+			   """)
+	@GetMapping("details/{giftId}")
+	public ResponseEntity<ResultDto<EventUpdateResponse>> detailsGiftLog(@AuthenticationPrincipal String email,
+			 														@PathVariable("giftId") Long giftId){
+
+		ResultDto<EventUpdateResponse> eventResultDto = eventService.detailsGiftLog(email , giftId);
+
+		return ResponseEntity.ok(eventResultDto);
+        
+	}
+	
+	@Operation(summary = "이벤트 수정", 
+			   description = """
+			   				사용자가 본인의 이벤트 정보를 수정합니다
+			   				- 본인 소유의 이벤트 정보가 아니라면 401을 , 잘못된 요청이면 400을 반환합니다.
+			   """)
 	@PutMapping("/{eventId}")
 	public ResponseEntity<ResultDto<EventUpdateResponse>> updateEvent( @PathVariable("eventId") long eventId
 													 , @RequestBody EventUpdateRequest req 
 													 , @AuthenticationPrincipal String email ){
 		
-		log.info("[PUT /events/{eventId} - Controller] : Start");
-		log.info("[PUT /events/{eventId} - Controller] : args -> eventId : " + eventId + " / userId : " + email);
-		
-		ResultDto eventResultDto = eventService.updateEvent(eventId, req , email);
+		ResultDto<EventUpdateResponse> eventResultDto = eventService.updateEvent(eventId, req , email);
 		
 		
-        if ("success".equals(eventResultDto.getResult())) {
-            log.info("[PUT /events/{eventId} - Controller] : End");
-        	return ResponseEntity.ok(eventResultDto);
-        }
-        else {
-        	log.info("[PUT /events/{eventId} - Controller] : Error");
-            return ResponseEntity.status(401).body(eventResultDto);
-        }
+		return ResponseEntity.ok(eventResultDto);
         
 	}
 	
-	
+	@Operation(summary = "이벤트 목록 조회", 
+			   description = """
+			   				사용자가 본인의 이벤트 목록을 조회합니다.
+			   """)
 	@GetMapping()
 	public ResponseEntity<ResultDto<Page<EventListResponse>>> eventList(@AuthenticationPrincipal String principal,
 																		  @PageableDefault(size = 5, sort = "eventDate", direction = Sort.Direction.DESC) Pageable pageable){
 		
-		log.info("[GET /events - Controller] : Start");
-		log.info("[PUT /events/{eventId} - Controller] : args -> userName : " + principal);
-		
 		ResultDto<Page<EventListResponse>> eventResultDto = eventService.eventList(principal, pageable);
-		
-        if ("success".equals(eventResultDto.getResult())) {
-            log.info("[PUT /events/{eventId} - Controller] : End");
-        	return ResponseEntity.ok(eventResultDto);
-        }
-        else {
-        	log.info("[PUT /events/{eventId} - Controller] : Error");
-            return ResponseEntity.status(401).body(eventResultDto);
-        }
+		return ResponseEntity.ok(eventResultDto);
         
 	}
 	
@@ -107,7 +110,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDetailsResultDto> detailsEvent(
             @AuthenticationPrincipal String email,
-            @PathVariable Long eventId) {
+            @PathVariable("eventId") Long eventId) {
 
         log.info("[EventController - detailsEvent] 사용자 정보 email: {}", email);
         log.info("[EventController - detailsEvent] eventId: {}", eventId);
@@ -133,7 +136,7 @@ public class EventController {
     @DeleteMapping("/{giftId}")
     public ResponseEntity<EventResultDto> deleteEvent(
             @AuthenticationPrincipal String email,
-            @PathVariable Long giftId) {
+            @PathVariable("giftId") Long giftId) {
 
         log.info("[EventController - deleteEvent] 사용자 정보 email: {}", email);
         log.info("[EventController - deleteEvent] giftId: {}", giftId);
@@ -159,7 +162,7 @@ public class EventController {
     @PostMapping("/{eventId}")
     public ResponseEntity<EventDetailsResultDto> insertEventOnDetails(
             @AuthenticationPrincipal String email,
-            @PathVariable Long eventId,
+            @PathVariable("eventId") Long eventId,
             @RequestBody EventRequestDto eventRequestDto
     ){
         log.info("[EventController - insertEventOnDetails] 사용자 정보 email: {}", email);

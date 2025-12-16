@@ -58,7 +58,12 @@ public class SecurityConfig {
                                 "/logout",
                                 "/statistics/**",
                                 "/assets/**",
-                                "favicon.ico"
+                                "favicon.ico",
+                                
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                                
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

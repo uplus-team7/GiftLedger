@@ -22,6 +22,9 @@ public interface EventService {
 
     
     ResultDto<EventUpdateResponse> updateEvent(long eventId, EventUpdateRequest req, String userName);
+    ResultDto<EventUpdateResponse> detailsGiftLog(String email , Long giftId);
+    
+   
     
     ResultDto<Page<EventListResponse>> eventList(String email, Pageable pageable);
 }

@@ -53,6 +53,34 @@ public class EventServiceImpl implements EventService{
     private final EventAcquaintanceRepository eventAcquaintanceRepository;
 	
 	
+
+	@Override
+	public ResultDto<EventUpdateResponse> detailsGiftLog(String email, Long giftId) {
+		
+		GiftLog giftLog = giftLogRepository.findById(giftId).orElseThrow(
+					() -> new IllegalArgumentException("해당 경조사비 전달 이력이 존재하지 않습니다.")
+				);
+		
+		EventAcquaintance eventAcq = eventAcquaintanceRepository.findById(giftLog.getEventAcquaintance()
+																				 .getEventAcquaintanceId()).orElseThrow(
+				() -> new IllegalArgumentException("잘못된 요청 입니다.")
+			);
+		
+		if(!eventAcq.getEvent().getMember().getEmail().equals(email)) {
+			throw new AccessDeniedException("조회 권한이 없습니다");
+		}
+		
+		EventUpdateResponse response = EventUpdateResponse.builder()
+														  .event(toEventDto(eventAcq.getEvent()))
+														  .acquaintance(toAcquaintanceDto(eventAcq.getAcquaintance()))
+														  .giftLog(toGiftLogDto(giftLog))
+														  .build();
+		
+		
+		return ResultDto.of("success", response);
+	}
+    
+    
 	@Override
 	@Transactional
 	public ResultDto<EventUpdateResponse> updateEvent(long eventId, EventUpdateRequest req, String userName) {
@@ -85,6 +113,11 @@ public class EventServiceImpl implements EventService{
 		
 		if( giftLog.getEventAcquaintance().getAcquaintance().getAcquaintanceId() != acq.getAcquaintanceId()
 			|| giftLog.getEventAcquaintance().getEvent().getEventId() != event.getEventId()) {
+			
+			log.info("Acq : "  + acq.getAcquaintanceId() 
+					+ " / giftLog : " +  giftLog.getEventAcquaintance().getAcquaintance().getAcquaintanceId()
+					+ " / event : " + event.getEventId()
+					+ " / giftLog : " +  giftLog.getEventAcquaintance().getEvent().getEventId());
 			throw new IllegalArgumentException("요청이 올바르지 않습니다");
 			
 		}
@@ -411,6 +444,8 @@ public class EventServiceImpl implements EventService{
 	            .memo(gl.getMemo())
 	            .build();
 	}
+
+
 
 
 

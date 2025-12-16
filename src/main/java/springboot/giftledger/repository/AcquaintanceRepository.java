@@ -14,6 +14,12 @@ public interface AcquaintanceRepository extends JpaRepository<Acquaintance,Long>
     
 	Page<Acquaintance> findByMemberEmail(String email,Pageable pageable);
 	
+	Page<Acquaintance> findByMemberEmailAndNameContaining(
+	        String email,
+	        String keyword,
+	        Pageable pageable
+	);
+	
 	boolean existsByPhone(String phone);
 
     Acquaintance findByPhone(String phone);

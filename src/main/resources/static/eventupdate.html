@@ -35,19 +35,28 @@
         }
 
         .sidebar-btn {
-            padding: 18px;
-            border-radius: 12px;
-            border: 2px solid #667eea;
-            background: white;
-            font-weight: 600;
-            color: #667eea;
-            cursor: pointer;
-        }
-
-        .sidebar-btn.active {
-            background: #667eea;
-            color: white;
-        }
+		    padding: 18px 20px;
+		    background: white;
+		    border: 2px solid #667eea;
+		    border-radius: 12px;
+		    font-size: 16px;
+		    font-weight: 600;
+		    color: #667eea;
+		    cursor: pointer;
+		    transition: all 0.3s ease;
+		    text-align: center;
+		}
+		
+		.sidebar-btn:hover {
+		    background: #667eea;
+		    color: white;
+		    transform: translateX(5px);
+		}
+		
+		.sidebar-btn.active {
+		    background: #667eea;
+		    color: white;
+		}
 
         /* 메인 */
         .main-content {
@@ -61,6 +70,18 @@
             display: flex;
             justify-content: space-between;
             color: white;
+        }
+        
+        .logout-btn {
+            padding: 10px 24px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .content {
@@ -151,15 +172,16 @@
 <body>
 <div class="container">
     <div class="sidebar">
-        <button class="sidebar-btn active">이벤트 수정</button>
-        <button class="sidebar-btn" onclick="location.href='event-search.html'">이벤트 조회</button>
-    </div>
+	    <button class="sidebar-btn" onclick="goToAnalytics()">분석 및 통계</button>
+	    <button class="sidebar-btn" onclick="goToEventRegister()">이벤트 등록</button>
+	    <button class="sidebar-btn active" onclick="goToSearch()">이벤트 조회</button>
+	</div>
 
     <div class="main-content">
         <div class="header">
-            <h2>축의금 관리 시스템</h2>
-            <button onclick="logout()">로그아웃</button>
-        </div>
+		    <div class="logo">축의금 관리 시스템</div>
+		    <button class="logout-btn" onclick="jwtLogout()">로그아웃</button>
+		</div>
 
         <div class="content">
             <div class="content-card">
@@ -178,6 +200,7 @@
                                 <option value="">선택</option>
                                 <option value="가족">가족</option>
                                 <option value="친구">친구</option>
+                                <option value="직장동료">직장동료</option>
                                 <option value="기타">기타</option>
                             </select>
                         </div>
@@ -197,6 +220,7 @@
                             <select id="eventType" required>
                                 <option value="">선택</option>
                                 <option value="결혼">결혼</option>
+                                <option value="생일">생일</option>
                                 <option value="장례">장례</option>
                             </select>
                         </div>
@@ -265,21 +289,30 @@
             </div>
         </div>
     </div>
+	    
+	<script src="/assets/js/pageMove.js"></script>
+	<script src="/assets/js/auth.js"></script>
 </div>
 
 <script>
-    const eventId = new URLSearchParams(location.search).get('id');
-    console.log(eventId);
+    const giftLogId = new URLSearchParams(location.search).get('id');
+    let acquaintanceId = null;
+    let eventId = null;
+    console.log(giftLogId);
+    const $location = document.getElementById('location');
     const authToken = sessionStorage.getItem('authToken');
 
     document.addEventListener('DOMContentLoaded', loadEvent);
 
     async function loadEvent() {
-        const res = await fetch(`/events/${eventId}`, {
+        const res = await fetch(`/events/details/${giftLogId}`, {
             headers: { 'X-AUTH-TOKEN': authToken }
         });
         const json = await res.json();
         const { event, acquaintance, giftLog } = json.data;
+        
+        acquaintanceId = acquaintance.acquaintanceId;
+        eventId = event.eventId;
 
         friendName.value = acquaintance.name;
         relationship.value = acquaintance.relation;
@@ -293,7 +326,7 @@
         eventDate.value = d;
         eventTime.value = t?.substring(0,5) || '';
 
-        location.value = event.location || '';
+        $location.value = event.location || '';
         document.querySelector(`input[name=isHost][value=${event.isOwner ? 'yes' : 'no'}]`).checked = true;
 
         amount.value = giftLog.amount;
@@ -307,6 +340,7 @@
 
         const body = {
             acquaintance: {
+            	acquaintanceId,
                 name: friendName.value,
                 relation: relationship.value,
                 groupName: detailGroup.value,
@@ -321,6 +355,7 @@
                 isOwner: document.querySelector('input[name=isHost]:checked').value === 'yes'
             },
             giftLog: {
+            	giftLogId,
                 amount: Number(amount.value),
                 actionType: document.querySelector('input[name=transactionType]:checked').value === 'income' ? '입금' : '출금',
                 payMethod: paymentMethod.value,
@@ -339,13 +374,9 @@
 
         const result = await res.json();
         alert(result.result === 'success' ? '수정 성공' : '수정 실패');
-        location.href = '/detailevent.html';
+        location.href = `detailevent.html?id=${eventId}`;
     });
 
-    function logout() {
-        sessionStorage.clear();
-        location.href = 'login.html';
-    }
 </script>
 </body>
 </html>
