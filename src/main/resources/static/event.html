@@ -112,7 +112,7 @@
 
     <div class="sidebar">
         <button class="sidebar-btn" onclick="goToAnalytics()">분석 및 통계</button>
-        <button class="sidebar-btn" onclick="goToRegister()">이벤트 등록</button>
+        <button class="sidebar-btn" onclick="goToEventRegister()">이벤트 등록</button>
         <button class="sidebar-btn active">이벤트 조회</button>
     </div>
 
@@ -120,7 +120,7 @@
 
         <div class="header">
             <div class="logo">축의금 관리 시스템</div>
-            <button class="logout-btn" onclick="logout()">로그아웃</button>
+            <button class="logout-btn" onclick="jwtLogout()">로그아웃</button>
         </div>
 
         <div class="content">
@@ -137,21 +137,10 @@
     </div>
 </div>
 
+<script src="/assets/js/pageMove.js"></script>
+<script src="/assets/js/auth.js"></script>
 <script>
     const pageSize = 5;
-    // 샘플 데이터 (실제로는 백엔드에서 가져옴)
-    const mockEvents = [
-        { id: 23, friendName: '김철수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-20', eventTime: '14:00', amount: 100000, transactionType: 'expense', memo: '대학 동기' },
-        { id: 33, friendName: '이영희', relationship: '직장동료', eventType: '장례', eventDate: '2024-12-15', eventTime: '10:00', amount: 50000, transactionType: 'expense', memo: '' },
-        { id: 29, friendName: '박민수', relationship: '친구', eventType: '결혼', eventDate: '2024-12-10', eventTime: '13:00', amount: 150000, transactionType: 'income', memo: '내 결혼식에 참석' },
-        { id: 4, friendName: '최지은', relationship: '가족', eventType: '돌잔치', eventDate: '2024-12-05', eventTime: '12:00', amount: 200000, transactionType: 'expense', memo: '조카' },
-        { id: 5, friendName: '정우성', relationship: '선후배', eventType: '개업', eventDate: '2024-12-01', eventTime: '11:00', amount: 50000, transactionType: 'expense', memo: '대학 선배' },
-        { id: 6, friendName: '강동원', relationship: '친구', eventType: '결혼', eventDate: '2024-11-28', eventTime: '15:00', amount: 100000, transactionType: 'expense', memo: '' },
-        { id: 7, friendName: '송혜교', relationship: '친척', eventType: '회갑', eventDate: '2024-11-25', eventTime: '18:00', amount: 300000, transactionType: 'expense', memo: '삼촌' },
-        { id: 8, friendName: '유재석', relationship: '직장동료', eventType: '결혼', eventDate: '2024-11-20', eventTime: '14:00', amount: 50000, transactionType: 'expense', memo: '' },
-        { id: 9, friendName: '이효리', relationship: '친구', eventType: '결혼', eventDate: '2024-11-15', eventTime: '13:30', amount: 100000, transactionType: 'expense', memo: '고등학교 친구' },
-        { id: 10, friendName: '박보검', relationship: '선후배', eventType: '장례', eventDate: '2024-11-10', eventTime: '09:00', amount: 50000, transactionType: 'expense', memo: '' },
-    ];
 
     /* 날짜 포맷 */
     function formatDate(dateString) {
@@ -253,8 +242,6 @@
     }
 
     function goToDetail(id){ location.href = `detailevent.html?id=${id}`; }
-    function goToRegister(){ location.href = "eventregister.html"; }
-    function goToAnalytics(){ location.href = "index.html"; }
     function logout(){ sessionStorage.clear(); location.href="login.html"; }
 
     loadEvents(0);
@@ -282,15 +269,6 @@
     function goToDetail(eventId) {
         // 실제로는 이벤트 ID와 함께 상세 페이지로 이동
         window.location.href = `detailevent.html?id=${eventId}`;
-    }
-
-    // 페이지 이동
-    function goToRegister() {
-        window.location.href = 'eventregister.html';
-    }
-
-    function goToAnalytics() {
-        window.location.href = 'analytics.html';
     }
 
     function logout() {

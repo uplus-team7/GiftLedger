@@ -370,8 +370,8 @@
 <div class="container">
     <div class="sidebar">
         <button class="sidebar-btn active" onclick="goToPage('analysis.html')">분석 및 통계</button>
-        <button class="sidebar-btn" onclick="goToPage('event-register.html')">이벤트 등록</button>
-        <button class="sidebar-btn" onclick="goToPage('event-search.html')">이벤트 조회</button>
+        <button class="sidebar-btn" onclick="goToPage('eventregister.html')">이벤트 등록</button>
+        <button class="sidebar-btn" onclick="goToPage('event.html')">이벤트 조회</button>
     </div>
 
     <div class="main-content">
@@ -564,7 +564,7 @@
             window.location.href = 'login.html';
             return;
         }
-        authButtons.innerHTML = '<button class="auth-btn" onclick="logout()">로그아웃</button>';
+        authButtons.innerHTML = '<button class="auth-btn" onclick="jwtLogout()">로그아웃</button>';
     }
 
     function logout() {

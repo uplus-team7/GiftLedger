@@ -11,6 +11,6 @@ function getJwtToken() {
 function jwtLogout() {
     if (confirm('로그아웃 하시겠습니까?')) {
         sessionStorage.removeItem('authToken');
-        window.location.href = '/login.html';
+        window.location.href = '/index.html';
     }
 }

@@ -403,10 +403,10 @@
             };
             return names[eventType] || eventType;
         }
+    }
     // 로그아웃
     function logout() {
     	
-    }
         localStorage.removeItem('accessToken');
         alert('로그아웃 되었습니다.');
         checkLoginStatus();  // 버튼 상태 업데이트
