@@ -196,7 +196,7 @@ public class EventServiceImpl implements EventService{
 	    		    EventAcquaintance ea = eaList.get(0);
 
 	    		    Optional<GiftLog> giftOpt =
-	    		            giftLogRepository.findFirstByEventId(event.getEventId());
+	    		            giftLogRepository.findFirstByEventAcquaintance_Event_EventIdOrderByGiftIdAsc(event.getEventId());
 
 	    		    return EventListResponse.builder()
 	    		            .event(response)

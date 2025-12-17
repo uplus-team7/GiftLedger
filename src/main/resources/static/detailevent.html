@@ -114,7 +114,14 @@
             margin: 0 auto;
         }
 
-        /* 뒤로가기 버튼 */
+        .header-actions {
+            display: flex;
+            justify-content: space-between; /* 양쪽 끝으로 밀어내기 */
+            align-items: center;            /* 수직 중앙 정렬 */
+            margin-bottom: 30px;            /* 기존 버튼에 있던 여백을 여기로 이동 */
+        }
+
+        /* 뒤로가기 버튼 (기존 코드에서 margin-bottom 제거) */
         .back-btn {
             display: inline-flex;
             align-items: center;
@@ -127,12 +134,30 @@
             font-weight: 600;
             color: #666;
             cursor: pointer;
-            margin-bottom: 30px;
+            /* margin-bottom: 30px; -> 부모(.header-actions)로 이동했으므로 제거 */
             transition: all 0.3s ease;
         }
 
         .back-btn:hover {
             background: #e0e0e0;
+        }
+
+        /* 삭제 버튼 스타일 (뒤로가기 버튼과 비슷하지만, 삭제 느낌을 살짝 줌) */
+        .delete-btn {
+            padding: 10px 20px;
+            background: #fff0f0; /* 연한 빨간 배경 (선택사항) */
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #dc3545;      /* 빨간색 텍스트 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ffe0e0;
+            color: #c82333;
         }
 
         /* 주요 정보 섹션 */
@@ -507,9 +532,14 @@
         <!-- 컨텐츠 -->
         <div class="content">
             <div class="content-card">
-                <button class="back-btn" onclick="goToSearch()">
-                    ← 목록으로 돌아가기
-                </button>
+                <div class="header-actions">
+                    <button class="back-btn" onclick="goToSearch()">
+                        ← 목록으로 돌아가기
+                    </button>
+                    <button class="delete-btn" onclick="">
+                        이벤트 삭제
+                    </button>
+                </div>
 
                 <!-- 주요 정보 -->
                 <div class="main-info">
@@ -694,7 +724,7 @@
 
         const badge = document.getElementById('transactionType');
         if (badge) {
-            if (firstLog && firstLog.giftLogDto.actionType === '보냄') {
+            if (event.isOwner === false) {
                 badge.innerText = '출금';
                 badge.className = 'transaction-badge expense-badge';
             } else {

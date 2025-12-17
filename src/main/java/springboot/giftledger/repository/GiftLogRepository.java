@@ -24,14 +24,16 @@ public interface GiftLogRepository extends JpaRepository<GiftLog, Long> {
     Long sumAmountByEventId(@Param("eventId") Long eventId);
     
     
-    @Query("""
-    	    select g
-    	    from GiftLog g
-    	    join g.eventAcquaintance ea
-    	    where ea.event.eventId = :eventId
-    	    order by g.giftId asc
-    	""")
-    	Optional<GiftLog> findFirstByEventId(@Param("eventId") Long eventId);
+//    @Query("""
+//    	    select g
+//    	    from GiftLog g
+//    	    join g.eventAcquaintance ea
+//    	    where ea.event.eventId = :eventId
+//    	    order by g.giftId asc
+//    	""")
+//    	Optional<GiftLog> findFirstByEventId(@Param("eventId") Long eventId);
+
+    Optional<GiftLog> findFirstByEventAcquaintance_Event_EventIdOrderByGiftIdAsc(Long eventId);
 
     @Query("SELECT AVG(g.amount) " +
             "FROM GiftLog g " +

@@ -151,7 +151,7 @@ public class EventServiceGetListTest {
                 .thenReturn(List.of(ea));
 
         // giftOpt empty
-        when(giftLogRepository.findFirstByEventId(2L))
+        when(giftLogRepository.findFirstByEventAcquaintance_Event_EventIdOrderByGiftIdAsc(2L))
                 .thenReturn(Optional.empty());
 
         ResultDto<Page<EventListResponse>> result =
@@ -180,7 +180,7 @@ public class EventServiceGetListTest {
                 .memo("메모 테스트")
                 .build();
 
-        when(giftLogRepository.findFirstByEventId(2L))
+        when(giftLogRepository.findFirstByEventAcquaintance_Event_EventIdOrderByGiftIdAsc(2L))
                 .thenReturn(Optional.of(giftLog));
 
         ResultDto<Page<EventListResponse>> result =
